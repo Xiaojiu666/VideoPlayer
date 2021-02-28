@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">VideoPlayer</string>
+    <string name="start_bulletChat">开启弹幕</string>
+    <string name="stop_bulletChat">停止弹幕</string>
+    <string name="clear_bulletChat">清除弹幕</string>
+    <string name="add_bulletChat">增加弹幕</string>
+    <string name="video_start">开始/继续播放</string>
+    <string name="video_stop">暂停播放</string>
+    <string name="video_rest">重新播放</string>
+</resources>

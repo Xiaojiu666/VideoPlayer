@@ -1,0 +1,3 @@
+include ':plugin_VideoPlayer'
+include ':app'
+rootProject.name = "VideoPlayer"
