@@ -133,7 +133,6 @@ public abstract class BaseDecoder implements IDecoder {
     }
 
 
-
     @Override
     public int getWidth() {
         return 0;
@@ -279,9 +278,22 @@ public abstract class BaseDecoder implements IDecoder {
                          MediaCodec.BufferInfo bufferInfo);
 
 
+    /**
+     * 通知解码线程继续运行
+     */
+    public void notifyDecode() {
+        synchronized (mLock) {
+            mLock.notifyAll();
+        }
+        if (mState == DecodeState.DECODING) {
+            mStateListener.decoderRunning(this);
+        }
+    }
+
     private int pullBufferFromDecoder() {
         // 查询是否有解码完成的数据，index >=0 时，表示数据有效，并且index为缓冲区索引
         int index = mCodec.dequeueOutputBuffer(mBufferInfo, 2000);
+        Log.e(TAG, "pullBufferFromDecoder" + index);
         switch (index) {
             case MediaCodec.INFO_OUTPUT_FORMAT_CHANGED:
                 break;
@@ -296,20 +308,10 @@ public abstract class BaseDecoder implements IDecoder {
         return -1;
     }
 
-    /**
-     * 通知解码线程继续运行
-     */
-    public void notifyDecode() {
-        synchronized (mLock) {
-            mLock.notifyAll();
-        }
-        if (mState == DecodeState.DECODING) {
-            mStateListener.decoderRunning(this);
-        }
-    }
-
     private boolean pushBufferToDecoder() {
+        //返回要用有效数据填充的输入缓冲区的索引,分块，因为有多块缓冲区
         int inputBufferIndex = mCodec.dequeueInputBuffer(2000);
+        Log.e(TAG, "pushBufferToDecoder" + inputBufferIndex);
         boolean isEndOfStream = false;
 
         if (inputBufferIndex >= 0) {
@@ -380,6 +382,7 @@ public abstract class BaseDecoder implements IDecoder {
         try {
             //1.根据音视频编码格式初始化解码器
             String type = mExtractor.getFormat().getString(MediaFormat.KEY_MIME);
+            Log.e(TAG, "initCodec " + type);
             mCodec = MediaCodec.createDecoderByType(type);
             //2.配置解码器
             if (!configCodec(mCodec, mExtractor.getFormat())) {
@@ -391,6 +394,15 @@ public abstract class BaseDecoder implements IDecoder {
             mInputBuffers = mCodec.getInputBuffers();
             mOutputBuffers = mCodec.getOutputBuffers();
             Log.e(TAG, "Codec init sucessful...");
+            for (int i = 0; i < mInputBuffers.length; i++){
+                Log.e(TAG, "Codec init mInputBuffers" + mInputBuffers[i].toString());
+            }
+
+            for (int i = 0; i < mOutputBuffers.length; i++){
+                Log.e(TAG, "Codec init mOutputBuffers" + mOutputBuffers[i].toString());
+            }
+
+//            Log.e(TAG, "Codec init mOutputBuffers" + mOutputBuffers.length);
         } catch (Exception e) {
             Log.e(TAG, "Exception " + e.getMessage());
             e.printStackTrace();

@@ -26,7 +26,6 @@ public class VideoDecoder extends BaseDecoder {
         mSurface = surface;
     }
 
-
     @Override
     void doneDecode() {
 

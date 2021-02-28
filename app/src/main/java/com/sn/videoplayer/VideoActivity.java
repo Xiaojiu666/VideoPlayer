@@ -85,8 +85,6 @@ public class VideoActivity extends AppCompatActivity implements View.OnClickList
         //创建音频解码器
         audioDecoder = new AudioDecoder(path);
         threadPool.execute(audioDecoder);
-
-
         audioDecoder.setStateListener(this);
         videoDecoder.setStateListener(this);
 
