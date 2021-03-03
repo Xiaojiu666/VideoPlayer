@@ -310,6 +310,7 @@ public abstract class BaseDecoder implements IDecoder {
 
     private boolean pushBufferToDecoder() {
         //返回要用有效数据填充的输入缓冲区的索引,分块，因为有多块缓冲区
+        //使（计算机待处理数据项）出列
         int inputBufferIndex = mCodec.dequeueInputBuffer(2000);
         Log.e(TAG, "pushBufferToDecoder" + inputBufferIndex);
         boolean isEndOfStream = false;

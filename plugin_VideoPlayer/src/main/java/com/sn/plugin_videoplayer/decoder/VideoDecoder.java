@@ -28,7 +28,7 @@ public class VideoDecoder extends BaseDecoder {
 
     @Override
     void doneDecode() {
-
+        Log.w(TAG, "SurfaceView和Surface都为空，至少需要一个不为空");
     }
 
     @Override
