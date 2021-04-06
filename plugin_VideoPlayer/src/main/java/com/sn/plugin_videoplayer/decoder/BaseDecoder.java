@@ -67,6 +67,7 @@ public abstract class BaseDecoder implements IDecoder {
 
     /**
      * 解码数据信息
+     * 用于存储解码或编码后的缓存数据的格式信息
      */
     private MediaCodec.BufferInfo mBufferInfo = new MediaCodec.BufferInfo();
 
@@ -324,6 +325,11 @@ public abstract class BaseDecoder implements IDecoder {
                         0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
                 isEndOfStream = true;
             } else {
+
+                //提醒解码器或编码器处理数据（分区ID，偏移量，取多少数据，）
+                //PTS此缓冲区的表示时间戳，以微秒为单位。这通常是该缓冲区应该呈现(渲染)的媒体时间。
+                // 当使用输出表面时，它将作为{@link SurfaceTexture#getTimestamp timestamp}传播到帧(转换为纳秒后)。
+                Log.i(TAG,"PTS mExtractor " +mExtractor.getCurrentTimestamp());
                 mCodec.queueInputBuffer(inputBufferIndex, 0,
                         sampleSize, mExtractor.getCurrentTimestamp(), 0);
                 //Log.e(TAG, "pushBufferToDecoder getCurrentTimestamp " + mExtractor.getCurrentTimestamp());
@@ -386,7 +392,7 @@ public abstract class BaseDecoder implements IDecoder {
             Log.e(TAG, "initCodec " + type);
             mCodec = MediaCodec.createDecoderByType(type);
             //2.配置解码器
-            if (!configCodec(mCodec, mExtractor.getFormat())) {
+            if (!   configCodec(mCodec, mExtractor.getFormat())) {
                 waitDecode();
             }
             //3.启动解码器

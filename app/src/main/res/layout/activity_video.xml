@@ -37,4 +37,20 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/video_stop" />
+
+    <Button
+        android:id="@+id/video_seek_before"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/seek_before"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/video_stop" />
+
+    <Button
+        android:id="@+id/video_seek_after"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/seek_after"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/video_seek_before" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,4 +7,6 @@
     <string name="video_start">开始/继续播放</string>
     <string name="video_stop">暂停播放</string>
     <string name="video_rest">重新播放</string>
+    <string name="seek_before">向前10S</string>
+    <string name="seek_after">向后10S</string>
 </resources>

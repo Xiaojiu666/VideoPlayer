@@ -19,11 +19,20 @@ public class VideoDecoder extends BaseDecoder {
 
     private SurfaceView mSurfaceView;
     private Surface mSurface;
+    private VideoExtractor videoExtractor;
 
     public VideoDecoder(String mFilePath, SurfaceView sfv, Surface surface) {
         super(mFilePath);
         mSurfaceView = sfv;
         mSurface = surface;
+    }
+
+    public VideoExtractor getVideoExtractor() {
+        return videoExtractor;
+    }
+
+    public void seek(){
+        videoExtractor.seek(1000000);
     }
 
     @Override
@@ -48,7 +57,8 @@ public class VideoDecoder extends BaseDecoder {
 
     @Override
     IExtractor initExtractor(String path) {
-        return new VideoExtractor(path);
+         videoExtractor = new VideoExtractor(path);
+        return videoExtractor;
     }
 
     @Override
