@@ -7,11 +7,12 @@ import android.view.SurfaceView
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.sn.plugin_videoplayer.Frame
-import com.sn.plugin_videoplayer.decoder.AudioDecoder
-import com.sn.plugin_videoplayer.decoder.BaseDecoder
-import com.sn.plugin_videoplayer.decoder.IDecoderStateListener
-import com.sn.plugin_videoplayer.decoder.VideoDecoder
+import com.sn.videoplayer.ffmpeg.demo.DemoNativeInterface
+import com.sn.videoplayer.media_codec.Frame
+import com.sn.videoplayer.media_codec.decoder.AudioDecoder
+import com.sn.videoplayer.media_codec.decoder.BaseDecoder
+import com.sn.videoplayer.media_codec.decoder.IDecoderStateListener
+import com.sn.videoplayer.media_codec.decoder.VideoDecoder
 import kotlinx.android.synthetic.main.activity_video.*
 import java.util.concurrent.Executors
 
@@ -23,6 +24,8 @@ class VideoActivity : AppCompatActivity(), View.OnClickListener,
         setContentView(R.layout.activity_video)
         initView()
         initPlayer()
+//        textView.text = DemoNativeInterface.ffmpegInfo()
+        Log.e(TAG,  "${DemoNativeInterface.stringFromJNI()}")
     }
 
 
