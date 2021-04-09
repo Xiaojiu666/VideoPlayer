@@ -4,7 +4,16 @@ cmake_minimum_required(VERSION 3.4.1)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 # 1. 定义so库和头文件所在目录，方面后面使用
-set(ffmpeg_lib_dir ${CMAKE_SOURCE_DIR}/../jniLibs/${ANDROID_ABI})
+set(ffmpeg_lib_dir ${CMAKE_SOURCE_DIR}/../libs/${ANDROID_ABI})
+#
+
+#set(distribution_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../app)
+#set_target_properties(XXXX PROPERTIES
+#        LIBRARY_OUTPUT_DIRECTORY
+#        ${distribution_DIR}/libs/${ANDROID_ABI})
+
+#set(ffmpeg_lib_dir  /Users/edz/StudioProjects/VideoPlayer/plugin_VideoPlayer/src/libs/${ANDROID_ABI})
+#set(ffmpeg_lib_dir  ${PROJECT_BINARY_DIR}/libs/${ANDROID_ABI})
 set(ffmpeg_head_dir ${CMAKE_SOURCE_DIR}/ffmpeg)
 
 # 2. 添加头文件目录

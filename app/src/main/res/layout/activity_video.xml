@@ -54,13 +54,23 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/video_seek_before" />
 
-    <TextView
-        android:id="@+id/textView"
+    <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="TextView"
         app:layout_constraintBottom_toTopOf="@+id/video_seek_before"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sfv" />
+        app:layout_constraintTop_toBottomOf="@+id/sfv">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="TextView"
+            app:layout_constraintBottom_toTopOf="@+id/video_seek_before"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sfv" />
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

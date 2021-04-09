@@ -14,17 +14,17 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
-//
-//        // 1) CMake 编译配置
-//        externalNativeBuild {
-//            cmake {
-//                cppFlags ""
-//            }
-//        }
-//
-//        ndk {
-//            abiFilters  "armeabi-v7a"
-//        }
+
+        // 1) CMake 编译配置
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
+        }
+
+        ndk {
+            abiFilters  "armeabi-v7a"
+        }
     }
 
     buildTypes {
@@ -40,17 +40,17 @@ android {
 //    }
 
 
-//// 2) 配置 CMakeLists 路径
-//    externalNativeBuild {
-//        cmake {
-//            path "src/main/cpp/CMakeLists.txt"
-//            version "3.10.2"
-//        }
-//    }
+// 2) 配置 CMakeLists 路径
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.10.2"
+        }
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
+//    implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'

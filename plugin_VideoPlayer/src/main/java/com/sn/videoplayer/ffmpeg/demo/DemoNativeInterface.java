@@ -5,7 +5,7 @@ public class DemoNativeInterface {
         System.loadLibrary("native-lib");
     }
 
-    public static native String stringFromJNI();
+    public static native String ffmpegInfo();
 
 
 //    public static native String ffmpegInfo();

@@ -48,14 +48,14 @@ extern "C" {
         #include <libavfilter/avfilter.h>
         #include <libavcodec/jni.h>
     JNIEXPORT jstring JNICALL
-    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_stringFromJNI(JNIEnv *env,
+    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_ffmpegInfo(JNIEnv *env,
                                                                           jobject /* this */) {
 //        std::string hello = "(*^__^*) 嘻嘻……~Hello from C++ 隔壁老李头";
 //        return env->NewStringUTF(hello.c_str());
         char info[40000] = {0};
         AVCodec *c_temp = av_codec_next(NULL);
         while (c_temp != NULL) {
-            if (c_temp->decode != NULL) {
+            if (c_temp ->decode != NULL) {
                 sprintf(info, "%sdecode:", info);
                 switch (c_temp->type) {
                     case AVMEDIA_TYPE_VIDEO:
@@ -72,7 +72,7 @@ extern "C" {
             } else {
                 sprintf(info, "%sencode:", info);
             }
-            c_temp = c_temp->next;
+            c_temp = c_temp->next; // ->等于取值
         }
 
         return env->NewStringUTF(info);
