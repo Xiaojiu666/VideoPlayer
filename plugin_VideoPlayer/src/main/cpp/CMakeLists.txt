@@ -90,15 +90,29 @@ add_library( # Sets the name of the library.
         # 工具
         ${CMAKE_SOURCE_DIR}/utils/logger.h
         ${CMAKE_SOURCE_DIR}/utils/timer.c
+        ${CMAKE_SOURCE_DIR}/media/const.h
 #
 #        # 解码器
-#        ${CMAKE_SOURCE_DIR}/media/one_frame.h
+        ${CMAKE_SOURCE_DIR}/media/one_frame.h
         ${CMAKE_SOURCE_DIR}/media/decoder/i_decoder.h
         ${CMAKE_SOURCE_DIR}/media/decoder/decode_state.h
-#        ${CMAKE_SOURCE_DIR}/media/decoder/i_decode_state_cb.cpp
+        ${CMAKE_SOURCE_DIR}/media/decoder/i_decode_state_cb.cpp
         ${CMAKE_SOURCE_DIR}/media/decoder/base_decoder.cpp
-#        ${CMAKE_SOURCE_DIR}/media/decoder/video/v_decoder.cpp
-#        ${CMAKE_SOURCE_DIR}/media/decoder/audio/a_decoder.cpp
+        ${CMAKE_SOURCE_DIR}/media/decoder/video/v_decoder.cpp
+        ${CMAKE_SOURCE_DIR}/media/decoder/audio/a_decoder.cpp
+
+        # 播放器
+        ${CMAKE_SOURCE_DIR}/media/player/def_player/player.cpp
+#        ${CMAKE_SOURCE_DIR}/media/player/gl_player/gl_player.cpp
+
+        # 渲染器
+        ${CMAKE_SOURCE_DIR}/media/render/video/video_render.h
+        ${CMAKE_SOURCE_DIR}/media/render/video/native_render/native_render.cpp
+
+        ${CMAKE_SOURCE_DIR}/media/render/audio/audio_render.h
+#        ${CMAKE_SOURCE_DIR}/media/render/audio/opensl_render.cpp
+
+
         )
 
 # 指定编译目标库时，cmake要链接的库
@@ -116,6 +130,7 @@ target_link_libraries(
         avformat
         avdevice
 
+        android
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib} )

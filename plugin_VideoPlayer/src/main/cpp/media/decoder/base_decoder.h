@@ -11,6 +11,7 @@
 #include "../../utils/logger.h"
 #include "i_decoder.h"
 #include "decode_state.h"
+#include "i_decode_state_cb.h"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -18,8 +19,9 @@ extern "C" {
 #include <libavutil/frame.h>
 #include <libavutil/time.h>
 };
-class BaseDecoder :IDecoder {
+class BaseDecoder : public IDecoder {
 private:
+
     const char *TAG = "BaseDecoder";
 
     //-------------定义解码相关------------------------------
@@ -129,7 +131,8 @@ public:
 
     //--------构造方法和析构方法-------------
 
-    BaseDecoder(JNIEnv *env, jstring path);
+    BaseDecoder(JNIEnv *env, jstring path, bool for_synthesizer);
+
     virtual ~BaseDecoder();
 
     //--------实现基础类方法-----------------
@@ -160,6 +163,110 @@ public:
     long duration() {
         return m_duration;
     }
+
+    char *GetStateStr() {
+        switch (m_state) {
+            case STOP: return (char *)"STOP";
+            case START: return (char *)"START";
+            case DECODING: return (char *)"DECODING";
+            case PAUSE: return (char *)"PAUSE";
+            case FINISH: return (char *)"FINISH";
+            default: return (char *)"UNKNOW";
+        }
+    }
+
+    void SetStateReceiver(IDecodeStateCb *cb) override {
+        m_state_cb = cb;
+    }
+protected:
+    IDecodeStateCb *m_state_cb = NULL;
+
+    /**
+     * 是否为合成器提供解码
+     * @return true 为合成器提供解码 false 解码播放
+     */
+    bool ForSynthesizer() {
+        return m_for_synthesizer;
+    }
+
+    const char * path() {
+        return m_path;
+    }
+
+    /**
+     * 解码器上下文
+     * @return
+     */
+    AVCodecContext *codec_cxt() {
+        return m_codec_ctx;
+    }
+
+    /**
+     * 视频数据编码格式
+     * @return
+     */
+    AVPixelFormat video_pixel_format() {
+        return m_codec_ctx->pix_fmt;
+    }
+
+    /**
+     * 获取解码时间基
+     */
+    AVRational time_base() {
+        return m_format_ctx->streams[m_stream_index]->time_base;
+    }
+
+    /**
+     * 解码一帧数据
+     * @return
+     */
+    AVFrame* DecodeOneFrame();
+
+    /**
+     * 音视频索引
+     */
+    virtual AVMediaType GetMediaType() = 0;
+
+    /**
+     * 是否需要自动循环解码
+     */
+    virtual bool NeedLoopDecode() = 0;
+
+    /**
+     * 子类准备回调方法
+     * @note 注：在解码线程中回调
+     * @param env 解码线程绑定的JVM环境
+     */
+    virtual void Prepare(JNIEnv *env) = 0;
+
+    /**
+     * 子类渲染回调方法
+     * @note 注：在解码线程中回调
+     * @param frame 视频：一帧YUV数据；音频：一帧PCM数据
+     */
+    virtual void Render(AVFrame *frame) = 0;
+
+    /**
+     * 子类释放资源回调方法
+     */
+    virtual void Release() = 0;
+
+    /**
+     * Log前缀
+     */
+    virtual const char *const LogSpec() = 0;
+
+    /**
+     * 进入等待
+     */
+    void Wait(long second = 0, long ms = 0);
+
+    /**
+     * 恢复解码
+     */
+    void SendSignal();
+
+    void CallbackState(DecodeState status);
 };
 
 

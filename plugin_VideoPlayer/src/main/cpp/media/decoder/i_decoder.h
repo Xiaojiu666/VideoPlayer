@@ -1,12 +1,16 @@
 //
-// Created by edz on 2021/4/9.
+// 解码器定义
+// Author: Chen Xiaoping
+// Create Date: 2019-08-10.
 //
 
-#ifndef VIDEOPLAYER_I_DECODER_H
-#define VIDEOPLAYER_I_DECODER_H
+#ifndef LEARNVIDEO_I_DECODER_H
+#define LEARNVIDEO_I_DECODER_H
 
-//这是一个纯虚类，类似 Java 的 interface
-class IDecoder{
+
+#include "i_decode_state_cb.h"
+
+class IDecoder {
 public:
     virtual void GoOn() = 0;
     virtual void Pause() = 0;
@@ -14,6 +18,8 @@ public:
     virtual bool IsRunning() = 0;
     virtual long GetDuration() = 0;
     virtual long GetCurPos() = 0;
+    virtual void SetStateReceiver(IDecodeStateCb *cb) = 0;
 };
 
-#endif //VIDEOPLAYER_I_DECODER_H
+
+#endif //LEARNVIDEO_I_DECODER_H

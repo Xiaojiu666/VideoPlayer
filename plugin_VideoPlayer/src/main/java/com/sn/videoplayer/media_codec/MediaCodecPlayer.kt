@@ -1,5 +1,6 @@
 package com.sn.videoplayer.media_codec
 
+import android.view.Surface
 import android.view.SurfaceView
 import com.sn.videoplayer.PlayerControl
 import com.sn.videoplayer.media_codec.decoder.AudioDecoder
@@ -28,7 +29,11 @@ class MediaCodecPlayer(var filePath:String,var sfv :SurfaceView ) : PlayerContro
         videoDecoder!!.setStateListener(this)
     }
 
-    override fun start() {
+    override fun initVideoPlayer(surface: Surface, filePath: String): Int {
+        return 0;
+    }
+
+    override fun start(playId: Int) {
         //开启播放
         videoDecoder!!.goOn()
         audioDecoder!!.goOn()
