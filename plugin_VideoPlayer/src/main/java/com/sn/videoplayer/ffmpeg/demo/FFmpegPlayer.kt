@@ -10,7 +10,7 @@ class FFmpegPlayer : PlayerControl() {
 
 
     override fun start(playId: Int) {
-        DemoNativeInterface.play(playId)
+//        DemoNativeInterface.play(playId)
     }
 
     override fun stop() {

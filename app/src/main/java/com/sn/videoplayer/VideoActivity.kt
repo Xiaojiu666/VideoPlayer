@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.activity_video.*
 import java.util.concurrent.Executors
 
 class VideoActivity : AppCompatActivity(){
-    private var sfv: SurfaceView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
@@ -28,18 +27,16 @@ class VideoActivity : AppCompatActivity(){
         val fFmpegInfo = fFmpegPlayer.getFFmpegInfo()
         var initVideoPlayer = 0
         textView.text =fFmpegInfo
-        sfv?.holder?.addCallback(object : SurfaceHolder.Callback {
+        sfv!!.holder!!.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(
                 holder: SurfaceHolder,
                 format: Int,
                 width: Int,
                 height: Int
             ) {
-                TODO("Not yet implemented")
             }
 
             override fun surfaceDestroyed(holder: SurfaceHolder) {
-                TODO("Not yet implemented")
             }
 
             override fun surfaceCreated(holder: SurfaceHolder) {

@@ -36,24 +36,32 @@ void BaseDecoder::CreateDecodeThread() {
 
 void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that) {
     JNIEnv * env;
-
+    LOGE(that->TAG, "Decode start");
     //将线程附加到虚拟机，并获取env
     if (that->m_jvm_for_thread->AttachCurrentThread(&env, NULL) != JNI_OK) {
         LOG_ERROR(that->TAG, that->LogSpec(), "Fail to Init decode thread");
         return;
     }
-
     that->CallbackState(PREPARE);
 
     that->InitFFMpegDecoder(env);
+    LOGE(that->TAG, "InitFFMpegDecoder start");
+
     that->AllocFrameBuffer();
+
+    LOGE(that->TAG, "AllocFrameBuffer start");
     av_usleep(1000);
+
+    LOGE(that->TAG, "av_usleep");
+
     that->Prepare(env);
+    LOGE(that->TAG, "Prepare");
     that->LoopDecode();
+    LOGE(that->TAG, "LoopDecode");
     that->DoneDecode(env);
-
+    LOGE(that->TAG, "DoneDecode");
     that->CallbackState(STOP);
-
+    LOGE(that->TAG, "Decode finish");
     //解除线程和jvm关联
     that->m_jvm_for_thread->DetachCurrentThread();
 
@@ -176,6 +184,7 @@ void BaseDecoder::LoopDecode() {
 
 AVFrame* BaseDecoder::DecodeOneFrame() {
     int ret = av_read_frame(m_format_ctx, m_packet);
+    LOG_INFO(TAG, LogSpec(),"ret %d",ret);
     while (ret == 0) {
         if (m_packet->stream_index == m_stream_index) {
             switch (avcodec_send_packet(m_codec_ctx, m_packet)) {
@@ -208,8 +217,10 @@ AVFrame* BaseDecoder::DecodeOneFrame() {
         }
         // 释放packet
         av_packet_unref(m_packet);
+        LOG_INFO(TAG, LogSpec(),"av_packet_unref 1");
         ret = av_read_frame(m_format_ctx, m_packet);
     }
+    LOG_INFO(TAG, LogSpec(),"av_packet_unref 2");
     av_packet_unref(m_packet);
     LOGI(TAG, "ret = %s", av_err2str(AVERROR(ret)))
     return NULL;

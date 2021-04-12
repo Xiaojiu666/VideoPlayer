@@ -9,6 +9,7 @@
 
 VideoDecoder::VideoDecoder(JNIEnv *env, jstring path, bool for_synthesizer)
 : BaseDecoder(env, path, for_synthesizer) {
+
 }
 
 VideoDecoder::~VideoDecoder() {
@@ -53,6 +54,7 @@ void VideoDecoder::InitBuffer() {
     // 将内存分配给RgbFrame，并将内存格式化为三个通道后，分别保存其地址
     av_image_fill_arrays(m_rgb_frame->data, m_rgb_frame->linesize,
                          m_buf_for_rgb_frame, DST_FORMAT, m_dst_w, m_dst_h, 1);
+    LOGI(TAG, "InitBuffer finish")
 }
 
 void VideoDecoder::InitSws() {
@@ -60,6 +62,7 @@ void VideoDecoder::InitSws() {
     m_sws_ctx = sws_getContext(width(), height(), video_pixel_format(),
                                m_dst_w, m_dst_h, DST_FORMAT,
                                SWS_FAST_BILINEAR, NULL, NULL, NULL);
+    LOGI(TAG, "InitSws finish")
 }
 
 void VideoDecoder::Render(AVFrame *frame) {
