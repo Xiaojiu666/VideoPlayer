@@ -98,7 +98,8 @@ void AudioDecoder::Render(AVFrame *frame) {
             }
         } else {
             LOG_INFO(TAG, LogSpec(), "ForSynthesizer()= false" )
-//            m_render->Render(m_out_buffer[0], (size_t) m_dest_data_size);
+
+            m_render->Render(m_out_buffer[0], (size_t) m_dest_data_size);
         }
     }
     LOG_INFO(TAG, LogSpec(), "Render= %s" ,"end")

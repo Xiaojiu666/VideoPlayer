@@ -82,6 +82,9 @@ add_library( h264
 set_target_properties( h264
         PROPERTIES IMPORTED_LOCATION
         ${ffmpeg_lib_dir}/libh264.so )
+#找打Android lib库里面的libOpenSLES.so的库
+find_library( OpenSLES-lib
+        OpenSLES )
 
 # 配置目标so库编译信息
 add_library( # Sets the name of the library.
@@ -116,7 +119,7 @@ add_library( # Sets the name of the library.
         ${CMAKE_SOURCE_DIR}/media/render/video/video_render.h
         ${CMAKE_SOURCE_DIR}/media/render/video/native_render/native_render.cpp
         ${CMAKE_SOURCE_DIR}/media/render/audio/audio_render.h
-#        ${CMAKE_SOURCE_DIR}/media/render/audio/opensl_render.cpp
+        ${CMAKE_SOURCE_DIR}/media/render/audio/opensl_render.cpp
 
 
         )
@@ -137,11 +140,11 @@ target_link_libraries(
         avformat
         avdevice
         h264
-
         -landroid
 #        ESOpenSL
 #        -lEGL
 #        -lGLESv2
         # Links the target library to the log library
         # included in the NDK.
+        ${OpenSLES-lib}
         ${log-lib} )

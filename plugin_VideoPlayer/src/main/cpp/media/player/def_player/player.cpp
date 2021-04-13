@@ -4,10 +4,12 @@
 
 #include "player.h"
 #include "../../render/video/native_render/native_render.h"
+#include "../../render/audio/opensl_render.h"
+
 //#include "../../render/audio/opensl_render.h"
 //#include "../../render/video/opengl_render/opengl_render.h"
 //#include "../../../opengl/drawer/proxy/def_drawer_proxy_impl.h"
-const char *TAG = "VideoDecoder";
+//const char *TAG = "VideoDecoder";
 Player::Player(JNIEnv *jniEnv, jstring path, jobject surface) {
     m_v_decoder = new VideoDecoder(jniEnv, path);
 
@@ -17,8 +19,9 @@ Player::Player(JNIEnv *jniEnv, jstring path, jobject surface) {
     LOGE(TAG, "NativeRender con")
     // 音频解码
     m_a_decoder = new AudioDecoder(jniEnv, path, false);
-////    m_a_render = new OpenSLRender();
-//    m_a_decoder->SetRender(m_a_render);
+
+    m_a_render = new OpenSLRender();
+    m_a_decoder->SetRender(m_a_render);
     LOGE(TAG, "AudioDecoder con")
 }
 
