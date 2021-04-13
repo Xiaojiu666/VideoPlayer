@@ -1,9 +1,11 @@
 //
-// Created by edz on 2021/4/9.
+// 音视频解码基类
+// Author: Chen Xiaoping
+// Create Date: 2019-08-02
 //
 
-#ifndef VIDEOPLAYER_BASE_DECODER_H
-#define VIDEOPLAYER_BASE_DECODER_H
+#ifndef LEARNVIDEO_BASEDECODER_H
+#define LEARNVIDEO_BASEDECODER_H
 
 #include <jni.h>
 #include <string>
@@ -11,7 +13,6 @@
 #include "../../utils/logger.h"
 #include "i_decoder.h"
 #include "decode_state.h"
-#include "i_decode_state_cb.h"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -19,7 +20,9 @@ extern "C" {
 #include <libavutil/frame.h>
 #include <libavutil/time.h>
 };
-class BaseDecoder : public IDecoder {
+
+class BaseDecoder: public IDecoder {
+
 private:
 
     const char *TAG = "BaseDecoder";
@@ -72,9 +75,7 @@ private:
     // 为合成器提供解码
     bool m_for_synthesizer = false;
 
-
     //-----------------私有方法------------------------------------
-
     /**
      * 初始化
      * @param env jvm环境
@@ -125,29 +126,14 @@ private:
      */
     void SyncRender();
 
-
-
 public:
-
-    //--------构造方法和析构方法-------------
-
     BaseDecoder(JNIEnv *env, jstring path, bool for_synthesizer);
-
     virtual ~BaseDecoder();
 
-    //--------实现基础类方法-----------------
-
-    void GoOn() override;
-    void Pause() override;
-    void Stop() override;
-    bool IsRunning() override;
-    long GetDuration() override;
-    long GetCurPos() override;
-
     /**
-    * 视频宽度
-    * @return
-    */
+     * 视频宽度
+     * @return
+     */
     int width() {
         return m_codec_ctx->width;
     }
@@ -164,6 +150,17 @@ public:
         return m_duration;
     }
 
+    void GoOn() override;
+    void Pause() override;
+    void Stop() override;
+    bool IsRunning() override;
+    long GetDuration() override;
+    long GetCurPos() override;
+
+    void SetStateReceiver(IDecodeStateCb *cb) override {
+        m_state_cb = cb;
+    }
+
     char *GetStateStr() {
         switch (m_state) {
             case STOP: return (char *)"STOP";
@@ -175,9 +172,6 @@ public:
         }
     }
 
-    void SetStateReceiver(IDecodeStateCb *cb) override {
-        m_state_cb = cb;
-    }
 protected:
     IDecodeStateCb *m_state_cb = NULL;
 
@@ -270,4 +264,4 @@ protected:
 };
 
 
-#endif //VIDEOPLAYER_BASE_DECODER_H
+#endif //LEARNVIDEO_BASEDECODER_H

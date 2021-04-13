@@ -8,7 +8,7 @@
 #include "../../utils/timer.c"
 
 BaseDecoder::BaseDecoder(JNIEnv *env, jstring path, bool for_synthesizer)
-        : m_for_synthesizer(for_synthesizer) {
+: m_for_synthesizer(for_synthesizer) {
     Init(env, path);
     CreateDecodeThread();
 }
@@ -36,32 +36,25 @@ void BaseDecoder::CreateDecodeThread() {
 
 void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that) {
     JNIEnv * env;
-    LOGE(that->TAG, "Decode start");
+
     //将线程附加到虚拟机，并获取env
     if (that->m_jvm_for_thread->AttachCurrentThread(&env, NULL) != JNI_OK) {
         LOG_ERROR(that->TAG, that->LogSpec(), "Fail to Init decode thread");
         return;
     }
+
     that->CallbackState(PREPARE);
 
     that->InitFFMpegDecoder(env);
-    LOGE(that->TAG, "InitFFMpegDecoder start");
-
     that->AllocFrameBuffer();
-
-    LOGE(that->TAG, "AllocFrameBuffer start");
     av_usleep(1000);
-
-    LOGE(that->TAG, "av_usleep");
-
     that->Prepare(env);
-    LOGE(that->TAG, "Prepare");
     that->LoopDecode();
-    LOGE(that->TAG, "LoopDecode");
+    LOG_ERROR(that->TAG, that->LogSpec(), "LoopDecode successful");
     that->DoneDecode(env);
-    LOGE(that->TAG, "DoneDecode");
+    LOG_ERROR(that->TAG, that->LogSpec(), "DoneDecode successful");
     that->CallbackState(STOP);
-    LOGE(that->TAG, "Decode finish");
+
     //解除线程和jvm关联
     that->m_jvm_for_thread->DetachCurrentThread();
 
@@ -164,9 +157,10 @@ void BaseDecoder::LoopDecode() {
         }
 
         if (DecodeOneFrame() != NULL) {
+            LOG_INFO(TAG, LogSpec(), "DecodeOneFrame= %s" ,"successful")
             SyncRender();
             Render(m_frame);
-
+            LOG_INFO(TAG, LogSpec(), "LoopDecode Render= %s" ,"end")
             if (m_state == START) {
                 m_state = PAUSE;
             }
@@ -180,13 +174,14 @@ void BaseDecoder::LoopDecode() {
             CallbackState(FINISH);
         }
     }
+    LOG_INFO(TAG, LogSpec(), "LoopDecode= %s" ,"end")
 }
 
 AVFrame* BaseDecoder::DecodeOneFrame() {
     int ret = av_read_frame(m_format_ctx, m_packet);
-    LOG_INFO(TAG, LogSpec(),"ret %d",ret);
     while (ret == 0) {
-        LOG_INFO(TAG, LogSpec(),"m_packet %d", m_packet->stream_index);
+        LOG_INFO(TAG, LogSpec(), "start stream_index = %d" ,m_packet->stream_index)
+        LOG_INFO(TAG, LogSpec(), "m_stream_index = %d" ,m_stream_index)
         if (m_packet->stream_index == m_stream_index) {
             switch (avcodec_send_packet(m_codec_ctx, m_packet)) {
                 case AVERROR_EOF: {
@@ -206,23 +201,27 @@ AVFrame* BaseDecoder::DecodeOneFrame() {
                 default:
                     break;
             }
+            LOG_INFO(TAG, LogSpec(), "m_frame = %d" ,m_frame->key_frame)
+            LOG_INFO(TAG, LogSpec(), "m_codec_ctx = %d" ,m_codec_ctx->codec_type)
+
             //TODO 这里需要考虑一个packet有可能包含多个frame的情况
             int result = avcodec_receive_frame(m_codec_ctx, m_frame);
+            LOG_INFO(TAG, LogSpec(), "result = %d" ,result)
             if (result == 0) {
                 ObtainTimeStamp();
+                LOG_INFO(TAG, LogSpec(), "successful stream_index = %d" ,m_packet->stream_index)
                 av_packet_unref(m_packet);
+                LOG_INFO(TAG, LogSpec(), "m_frame= %d" ,m_frame->key_frame)
                 return m_frame;
             } else {
                 LOG_INFO(TAG, LogSpec(), "Receive frame error result: %s", av_err2str(AVERROR(result)))
             }
         }
         // 释放packet
-//        av_packet_unref(m_packet);
-        LOG_INFO(TAG, LogSpec(),"av_packet_unref 1");
+        av_packet_unref(m_packet);
         ret = av_read_frame(m_format_ctx, m_packet);
-        LOG_INFO(TAG, LogSpec(),"av_packet_unref %d",ret);
     }
-    LOG_INFO(TAG, LogSpec(),"av_packet_unref 2");
+    LOG_INFO(TAG, LogSpec(), "end stream_index = %d" ,m_packet->stream_index)
     av_packet_unref(m_packet);
     LOGI(TAG, "ret = %s", av_err2str(AVERROR(ret)))
     return NULL;
@@ -266,6 +265,7 @@ void BaseDecoder::ObtainTimeStamp() {
 }
 
 void BaseDecoder::SyncRender() {
+    LOG_INFO(TAG, LogSpec(), "SyncRender= %s" ,"successful")
     if (ForSynthesizer()) {
 //        av_usleep(15000);
         return;
@@ -275,6 +275,7 @@ void BaseDecoder::SyncRender() {
     if (m_cur_t_s > passTime) {
         av_usleep((unsigned int)((m_cur_t_s - passTime) * 1000));
     }
+    LOG_INFO(TAG, LogSpec(), "SyncRender= %s" ,"end")
 }
 
 void BaseDecoder::DoneDecode(JNIEnv *env) {

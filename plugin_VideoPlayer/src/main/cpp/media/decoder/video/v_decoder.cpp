@@ -63,6 +63,7 @@ void VideoDecoder::InitSws() {
 }
 
 void VideoDecoder::Render(AVFrame *frame) {
+    LOG_INFO(TAG, LogSpec(), "Render= %d" , frame->key_frame)
     sws_scale(m_sws_ctx, frame->data, frame->linesize, 0,
               height(), m_rgb_frame->data, m_rgb_frame->linesize);
     OneFrame * one_frame = new OneFrame(m_rgb_frame->data[0], m_rgb_frame->linesize[0], frame->pts, time_base(), NULL, false);
@@ -74,6 +75,7 @@ void VideoDecoder::Render(AVFrame *frame) {
             Wait(0, 200);
         }
     }
+    LOG_INFO(TAG, LogSpec(), "Render= %s" ,"end")
 }
 
 bool VideoDecoder::NeedLoopDecode() {

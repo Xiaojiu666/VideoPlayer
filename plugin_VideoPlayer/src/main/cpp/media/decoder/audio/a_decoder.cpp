@@ -80,7 +80,7 @@ void AudioDecoder::InitRender() {
 };
 
 void AudioDecoder::Render(AVFrame *frame) {
-
+    LOG_INFO(TAG, LogSpec(), "Render= %s" ,"successful")
     InitOutBuffer();
 
     // 转换，返回每个通道的样本数
@@ -100,6 +100,7 @@ void AudioDecoder::Render(AVFrame *frame) {
             m_render->Render(m_out_buffer[0], (size_t) m_dest_data_size);
         }
     }
+    LOG_INFO(TAG, LogSpec(), "Render= %s" ,"end")
 }
 
 void AudioDecoder::Release() {
