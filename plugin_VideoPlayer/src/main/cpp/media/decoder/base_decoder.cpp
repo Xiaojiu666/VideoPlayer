@@ -46,9 +46,12 @@ void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that) {
     that->CallbackState(PREPARE);
 
     that->InitFFMpegDecoder(env);
+    LOG_ERROR(that->TAG, that->LogSpec(), "InitFFMpegDecoder successful");
     that->AllocFrameBuffer();
+    LOG_ERROR(that->TAG, that->LogSpec(), "AllocFrameBuffer successful");
     av_usleep(1000);
     that->Prepare(env);
+    LOG_ERROR(that->TAG, that->LogSpec(), "Prepare successful");
     that->LoopDecode();
     LOG_ERROR(that->TAG, that->LogSpec(), "LoopDecode successful");
     that->DoneDecode(env);

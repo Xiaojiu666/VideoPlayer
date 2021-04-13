@@ -76,6 +76,12 @@ find_library( # Sets the name of the path variable.
         # Specifies the name of the NDK library that
         # you want CMake to locate.
         log )
+add_library( h264
+        SHARED
+        IMPORTED)
+set_target_properties( h264
+        PROPERTIES IMPORTED_LOCATION
+        ${ffmpeg_lib_dir}/libh264.so )
 
 # 配置目标so库编译信息
 add_library( # Sets the name of the library.
@@ -106,9 +112,9 @@ add_library( # Sets the name of the library.
 #        ${CMAKE_SOURCE_DIR}/media/player/gl_player/gl_player.cpp
 
         # 渲染器
+        # 必须以来.h 在依赖CPP
         ${CMAKE_SOURCE_DIR}/media/render/video/video_render.h
         ${CMAKE_SOURCE_DIR}/media/render/video/native_render/native_render.cpp
-
         ${CMAKE_SOURCE_DIR}/media/render/audio/audio_render.h
 #        ${CMAKE_SOURCE_DIR}/media/render/audio/opensl_render.cpp
 
@@ -117,6 +123,7 @@ add_library( # Sets the name of the library.
 
 # 指定编译目标库时，cmake要链接的库
 target_link_libraries(
+
 
         # 指定目标库，native-lib 是在上面 add_library 中配置的目标库
         native-lib
@@ -129,8 +136,12 @@ target_link_libraries(
         swscale
         avformat
         avdevice
+        h264
 
-        android
+        -landroid
+#        ESOpenSL
+#        -lEGL
+#        -lGLESv2
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib} )

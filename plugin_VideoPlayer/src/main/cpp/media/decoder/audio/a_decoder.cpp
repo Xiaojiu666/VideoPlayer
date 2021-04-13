@@ -5,7 +5,6 @@
 #include "a_decoder.h"
 #include "../../const.h"
 #include "../../../ffmpeg/include/libavcodec/avcodec.h"
-#include "../../../../../../../../../Library/Android/sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/include/jni.h"
 
 AudioDecoder::AudioDecoder(JNIEnv *env, const jstring path, bool forSynthesizer) : BaseDecoder(
         env, path, forSynthesizer) {
@@ -82,13 +81,14 @@ void AudioDecoder::InitRender() {
 void AudioDecoder::Render(AVFrame *frame) {
     LOG_INFO(TAG, LogSpec(), "Render= %s" ,"successful")
     InitOutBuffer();
-
+    LOG_INFO(TAG, LogSpec(), "InitOutBuffer= %s" ,"successful")
     // 转换，返回每个通道的样本数
     int ret = swr_convert(m_swr, m_out_buffer, m_dest_data_size/2,
                           (const uint8_t **) frame->data, frame->nb_samples);
-
+    LOG_INFO(TAG, LogSpec(), "ret= %d" ,ret)
     if (ret > 0) {
         if (ForSynthesizer()) {
+            LOG_INFO(TAG, LogSpec(), "ForSynthesizer()= true" )
             if (m_state_cb != NULL) {
                 OneFrame *one_frame = new OneFrame(m_out_buffer[0], m_dest_data_size, frame->pts,
                                                    time_base(), m_out_buffer[1], true);
@@ -97,7 +97,8 @@ void AudioDecoder::Render(AVFrame *frame) {
                 }
             }
         } else {
-            m_render->Render(m_out_buffer[0], (size_t) m_dest_data_size);
+            LOG_INFO(TAG, LogSpec(), "ForSynthesizer()= false" )
+//            m_render->Render(m_out_buffer[0], (size_t) m_dest_data_size);
         }
     }
     LOG_INFO(TAG, LogSpec(), "Render= %s" ,"end")
