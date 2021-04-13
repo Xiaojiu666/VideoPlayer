@@ -186,6 +186,7 @@ AVFrame* BaseDecoder::DecodeOneFrame() {
     int ret = av_read_frame(m_format_ctx, m_packet);
     LOG_INFO(TAG, LogSpec(),"ret %d",ret);
     while (ret == 0) {
+        LOG_INFO(TAG, LogSpec(),"m_packet %d", m_packet->stream_index);
         if (m_packet->stream_index == m_stream_index) {
             switch (avcodec_send_packet(m_codec_ctx, m_packet)) {
                 case AVERROR_EOF: {
@@ -216,9 +217,10 @@ AVFrame* BaseDecoder::DecodeOneFrame() {
             }
         }
         // 释放packet
-        av_packet_unref(m_packet);
+//        av_packet_unref(m_packet);
         LOG_INFO(TAG, LogSpec(),"av_packet_unref 1");
         ret = av_read_frame(m_format_ctx, m_packet);
+        LOG_INFO(TAG, LogSpec(),"av_packet_unref %d",ret);
     }
     LOG_INFO(TAG, LogSpec(),"av_packet_unref 2");
     av_packet_unref(m_packet);
