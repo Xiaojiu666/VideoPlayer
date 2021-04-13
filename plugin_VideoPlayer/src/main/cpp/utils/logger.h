@@ -17,6 +17,7 @@
 
     #define LOG_INFO(TAG, SPEC, FMT, ...) LOGI(TAG, "[%s] " FMT, SPEC, ##__VA_ARGS__)
     #define LOG_ERROR(TAG, SPEC, FMT, ...) LOGE(TAG, "[%s] " FMT, SPEC, ##__VA_ARGS__)
+    #define LOG_ENUM(TAG, SPEC, FMT, ...) LOGE(TAG, "[%s] " FMT, SPEC, ##__VA_ARGS__)
 #else
     #define LOGD(TAG, FORMAT,...);
     #define LOGI(TAG, FORMAT,...);

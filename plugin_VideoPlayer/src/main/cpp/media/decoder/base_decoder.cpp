@@ -152,9 +152,9 @@ void BaseDecoder::LoopDecode() {
         }
 
         if (m_state == STOP) {
+            LOG_INFO(TAG, LogSpec(), "m_state == STOP")
             break;
         }
-
         if (-1 == m_started_t) {
             m_started_t = GetCurMsTime();
         }

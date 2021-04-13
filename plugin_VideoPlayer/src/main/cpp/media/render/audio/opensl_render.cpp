@@ -28,6 +28,7 @@ void OpenSLRender::Render(uint8_t *pcm, int size) {
     LOG_INFO(TAG, "Render= %s" ,"start")
     if (m_pcm_player) {
         if (pcm != NULL && size > 0) {
+            LOGI(TAG, "pcm not null %d" ,m_data_queue.size() )
             while (m_data_queue.size() >= 2) {
                 SendCacheReadySignal();
                 usleep(20000);
@@ -43,6 +44,7 @@ void OpenSLRender::Render(uint8_t *pcm, int size) {
             SendCacheReadySignal();
         }
     } else {
+        LOGI(TAG, "free pcm")
         free(pcm);
     }
     LOG_INFO(TAG, "Render= %s" ,"end")

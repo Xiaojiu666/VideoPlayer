@@ -19,7 +19,6 @@ Player::Player(JNIEnv *jniEnv, jstring path, jobject surface) {
     LOGE(TAG, "NativeRender con")
     // 音频解码
     m_a_decoder = new AudioDecoder(jniEnv, path, false);
-
     m_a_render = new OpenSLRender();
     m_a_decoder->SetRender(m_a_render);
     LOGE(TAG, "AudioDecoder con")
