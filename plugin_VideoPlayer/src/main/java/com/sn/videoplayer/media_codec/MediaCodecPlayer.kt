@@ -39,7 +39,7 @@ class MediaCodecPlayer(var filePath:String,var sfv :SurfaceView ) : PlayerContro
         audioDecoder!!.goOn()
 
     }
-    override fun stop() {
+    override fun stop(playId: Int) {
 
         videoDecoder!!.stop()
         audioDecoder!!.stop()

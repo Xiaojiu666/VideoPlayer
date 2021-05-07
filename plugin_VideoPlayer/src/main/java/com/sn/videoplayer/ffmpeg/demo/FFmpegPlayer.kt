@@ -13,7 +13,8 @@ class FFmpegPlayer : PlayerControl() {
         DemoNativeInterface.play(playId)
     }
 
-    override fun stop() {
+    override fun stop(playId: Int) {
+        DemoNativeInterface.pause(playId)
     }
 
     override fun onDestroy() {
@@ -22,6 +23,10 @@ class FFmpegPlayer : PlayerControl() {
 
     fun getFFmpegInfo(): String? {
         return DemoNativeInterface.ffmpegInfo()
+    }
+
+    fun getVideoTime(playId: Int):String{
+        return DemoNativeInterface.videoTime(playId)
     }
 
 }

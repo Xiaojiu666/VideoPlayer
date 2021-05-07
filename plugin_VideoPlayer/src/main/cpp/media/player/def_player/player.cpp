@@ -12,7 +12,6 @@
 //const char *TAG = "VideoDecoder";
 Player::Player(JNIEnv *jniEnv, jstring path, jobject surface) {
     m_v_decoder = new VideoDecoder(jniEnv, path);
-
     // 本地窗口播放
     m_v_render = new NativeRender(jniEnv, surface);
     m_v_decoder->SetRender(m_v_render);
@@ -41,4 +40,12 @@ void Player::pause() {
         m_v_decoder->Pause();
         m_a_decoder->Pause();
     }
+}
+
+char* Player::viedeotime() {
+    if (m_v_decoder != NULL) {
+        char *string = m_v_decoder->VideoTime();
+        return string;
+    }
+    return NULL;
 }

@@ -8,7 +8,7 @@ abstract class  PlayerControl {
 
     abstract fun start(playId: Int)
 
-    abstract fun stop()
+    abstract fun stop(playId: Int)
 
     abstract fun onDestroy()
 

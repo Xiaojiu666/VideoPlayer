@@ -81,6 +81,7 @@ void BaseDecoder::InitFFMpegDecoder(JNIEnv * env) {
         return;
     }
 
+
     //4，查找编解码器
     //4.1 获取视频流的索引
     int vIdx = -1;//存放视频流的索引
@@ -181,11 +182,14 @@ void BaseDecoder::LoopDecode() {
 }
 
 AVFrame* BaseDecoder::DecodeOneFrame() {
+    //从媒体流中读取帧填充到填充到Packet的数据缓存空间。
     int ret = av_read_frame(m_format_ctx, m_packet);
     while (ret == 0) {
         LOG_INFO(TAG, LogSpec(), "start stream_index = %d" ,m_packet->stream_index)
         LOG_INFO(TAG, LogSpec(), "m_stream_index = %d" ,m_stream_index)
+        // stream_index Packet所在stream的index
         if (m_packet->stream_index == m_stream_index) {
+            //发送数据到ffmepg，放到解码队列中
             switch (avcodec_send_packet(m_codec_ctx, m_packet)) {
                 case AVERROR_EOF: {
                     av_packet_unref(m_packet);
@@ -208,8 +212,16 @@ AVFrame* BaseDecoder::DecodeOneFrame() {
             LOG_INFO(TAG, LogSpec(), "m_codec_ctx = %d" ,m_codec_ctx->codec_type)
 
             //TODO 这里需要考虑一个packet有可能包含多个frame的情况
+            //将成功的解码队列中取出1个frame
             int result = avcodec_receive_frame(m_codec_ctx, m_frame);
             LOG_INFO(TAG, LogSpec(), "result = %d" ,result)
+            LOG_INFO(TAG, LogSpec(), "m_frame.pts = %d" , m_frame->pts)
+
+            if (LogSpec()=="VIDEOXXXX"){
+                int64_t currentMills = m_frame->pts / 1000;
+                LOG_INFO(TAG, LogSpec(), "currentMills = %d" , currentMills)
+            }
+
             if (result == 0) {
                 ObtainTimeStamp();
                 LOG_INFO(TAG, LogSpec(), "successful stream_index = %d" ,m_packet->stream_index)
@@ -311,7 +323,7 @@ void BaseDecoder::DoneDecode(JNIEnv *env) {
 }
 
 void BaseDecoder::Wait(long second, long ms) {
-//    LOG_INFO(TAG, LogSpec(), "Decoder run into wait, state：%s", GetStateStr())
+    LOG_INFO(TAG, LogSpec(), "Decoder run into wait, state：%s", GetStateStr())
     pthread_mutex_lock(&m_mutex);
     if (second > 0 || ms > 0) {
         timeval now;
@@ -337,6 +349,27 @@ void BaseDecoder::SendSignal() {
 void BaseDecoder::GoOn() {
     m_state = DECODING;
     SendSignal();
+}
+
+
+char* BaseDecoder::VideoTime() {
+    char info[40960] = {0};
+    //4，获取音视频流信息
+    if(m_format_ctx->duration != AV_NOPTS_VALUE){
+        int hours, mins, secs, us;
+        int64_t duration = m_format_ctx->duration + 5000;
+        secs = duration / AV_TIME_BASE;
+        us = duration % AV_TIME_BASE;
+        mins = secs / 60;
+        secs %= 60;
+        hours = mins/ 60;
+        mins %= 60;
+        LOG_ERROR(TAG, LogSpec(),"%02d:%02d:%02d.%02d\n", hours, mins, secs, (100 * us) / AV_TIME_BASE)
+        snprintf(info, 40960, "%02d:%02d:%02d", hours, mins, secs);
+        return info;
+    }
+
+    return NULL;
 }
 
 void BaseDecoder::Pause() {

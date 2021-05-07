@@ -11,6 +11,8 @@ object DemoNativeInterface {
 
     external fun pause(player: Int)
 
+    external fun videoTime(player: Int):String
+
     init {
         System.loadLibrary("native-lib")
     }

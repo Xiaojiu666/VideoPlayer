@@ -92,7 +92,7 @@ protected:
     void Release() override;
 
     const char *const LogSpec() override {
-        return "VIDEO";
+        return "VIDEOXXXX";
     };
 };
 

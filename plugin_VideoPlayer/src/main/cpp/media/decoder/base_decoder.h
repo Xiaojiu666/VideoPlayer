@@ -138,6 +138,7 @@ public:
         return m_codec_ctx->width;
     }
 
+
     /**
      * 视频高度
      * @return
@@ -150,6 +151,8 @@ public:
         return m_duration;
     }
 
+
+    char* VideoTime() override;
     void GoOn() override;
     void Pause() override;
     void Stop() override;
