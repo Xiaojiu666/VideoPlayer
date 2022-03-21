@@ -172,7 +172,7 @@ public abstract class BaseDecoder implements IDecoder {
 
     @Override
     public void run() {
-        Log.e(TAG, "Thread Name " + Thread.currentThread().getName());
+        Log.e(TAG, " Thread Name " + Thread.currentThread().getName());
         if (mState == DecodeState.STOP) {
             mState = DecodeState.START;
         }

@@ -27,6 +27,8 @@ class VideoActivity : AppCompatActivity(){
         val fFmpegInfo = fFmpegPlayer.getFFmpegInfo()
         var initVideoPlayer = 0
         textView.text =fFmpegInfo
+
+
         sfv!!.holder!!.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(
                 holder: SurfaceHolder,
@@ -56,7 +58,6 @@ class VideoActivity : AppCompatActivity(){
 
 
         video_start.setOnClickListener {
-
             fFmpegPlayer.start(initVideoPlayer)
         }
 

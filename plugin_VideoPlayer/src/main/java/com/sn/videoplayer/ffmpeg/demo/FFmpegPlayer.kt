@@ -4,6 +4,7 @@ import android.view.Surface
 import com.sn.videoplayer.PlayerControl
 
 class FFmpegPlayer : PlayerControl() {
+
     override fun initVideoPlayer(surface: Surface, filePath: String): Int {
         return DemoNativeInterface.createPlayer(filePath, surface)
     }

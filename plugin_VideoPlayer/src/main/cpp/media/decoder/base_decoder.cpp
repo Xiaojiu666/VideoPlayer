@@ -217,6 +217,7 @@ AVFrame* BaseDecoder::DecodeOneFrame() {
                     LOG_ERROR(TAG, LogSpec(), "Decode error: %s", av_err2str(AVERROR(ENOMEM)));
                     break;
                 default:
+                    LOG_ERROR(TAG, LogSpec(), "Decode error: %s", av_err2str(AVERROR(ENOMEM)));
                     break;
             }
             LOG_INFO(TAG, LogSpec(), "m_frame = %d" ,m_frame->key_frame)
