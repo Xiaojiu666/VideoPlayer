@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
                val intent = Intent(MainActivity@ this, VideoActivity::class.java)
                startActivity(intent)
            }
-
        }
     }
 

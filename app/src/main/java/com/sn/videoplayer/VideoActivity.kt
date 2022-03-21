@@ -41,16 +41,22 @@ class VideoActivity : AppCompatActivity(){
 
             override fun surfaceCreated(holder: SurfaceHolder) {
                 initVideoPlayer  = fFmpegPlayer.initVideoPlayer(holder.surface, Config.FILE_PATH)
-
-
                 Log.e(TAG,"initVideoPlayer : $initVideoPlayer")
+                Thread(Runnable {
+                    Thread.sleep(1000)
+                    runOnUiThread {
+                        var videoTime = fFmpegPlayer.getVideoTime(initVideoPlayer)
+                        Log.e(TAG,"videoTime : $videoTime")
+                        seekBar.setTotalTime(videoTime)
+                    }
+                }).start()
             }
         })
 
 
+
         video_start.setOnClickListener {
-            var videoTime = fFmpegPlayer.getVideoTime(initVideoPlayer)
-            Log.e(TAG,"videoTime : $videoTime")
+
             fFmpegPlayer.start(initVideoPlayer)
         }
 
