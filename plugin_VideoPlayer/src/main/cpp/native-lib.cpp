@@ -73,7 +73,7 @@ int volatile gIsThreadStop = 0;
         Player *p = (Player *) player;
         p->pause();
     }
-    https://www.cnblogs.com/seven-sky/p/7205932.html
+//    https://www.cnblogs.com/seven-sky/p/7205932.html
     JNIEXPORT void JNICALL
     Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStart(JNIEnv *env, jobject  /* this */){
 

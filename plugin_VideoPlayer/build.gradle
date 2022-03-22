@@ -14,13 +14,13 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
-
-        // 1) CMake 编译配置
         externalNativeBuild {
             cmake {
-                cppFlags ""
+                cppFlags ''
             }
         }
+
+        // 1) CMake 编译配置
 
         ndk {
             abiFilters  "armeabi-v7a"
@@ -43,8 +43,8 @@ android {
 // 2) 配置 CMakeLists 路径
     externalNativeBuild {
         cmake {
-            path "src/main/cpp/CMakeLists.txt"
-            version "3.10.2"
+            path 'src/main/cpp/CMakeLists.txt'
+            version '3.10.2'
         }
     }
 }
