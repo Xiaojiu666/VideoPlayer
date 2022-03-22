@@ -84,7 +84,7 @@ protected:
      * 注：在解码线程中回调
      * @param frame 解码RGBA数据
      */
-    void Render(AVFrame *frame) override;
+    void Render(AVFrame *frame,JNIEnv *env) override;
 
     /**
      * 释放回调

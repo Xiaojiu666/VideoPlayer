@@ -13,6 +13,7 @@ extern "C" {
 #include <libavformat/avformat.h>
 #include <libavfilter/avfilter.h>
 #include <libavcodec/jni.h>
+#include "../../utils/logger.h"
 int volatile gIsThreadStop = 0;
 
     JNIEXPORT jstring JNICALL
@@ -76,8 +77,9 @@ int volatile gIsThreadStop = 0;
 //    https://www.cnblogs.com/seven-sky/p/7205932.html
     JNIEXPORT void JNICALL
     Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStart(JNIEnv *env, jobject  /* this */){
-
+//        env.
     }
+
 
     JNIEXPORT void JNICALL
     Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStop(JNIEnv *env,
