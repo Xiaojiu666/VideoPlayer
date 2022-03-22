@@ -37,7 +37,6 @@ class MediaCodecPlayer(var filePath:String,var sfv :SurfaceView ) : PlayerContro
         //开启播放
         videoDecoder!!.goOn()
         audioDecoder!!.goOn()
-
     }
     override fun stop(playId: Int) {
 

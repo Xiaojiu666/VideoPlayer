@@ -13,6 +13,10 @@ object DemoNativeInterface {
 
     external fun videoTime(player: Int):String
 
+    external fun threadStart();
+
+    external fun threadStop();
+
     init {
         System.loadLibrary("native-lib")
     }

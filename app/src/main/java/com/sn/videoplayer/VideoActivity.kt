@@ -45,7 +45,6 @@ class VideoActivity : AppCompatActivity(){
                 initVideoPlayer  = fFmpegPlayer.initVideoPlayer(holder.surface, Config.FILE_PATH)
                 Log.e(TAG,"initVideoPlayer : $initVideoPlayer")
                 Thread(Runnable {
-                    Thread.sleep(1000)
                     runOnUiThread {
                         var videoTime = fFmpegPlayer.getVideoTime(initVideoPlayer)
                         Log.e(TAG,"videoTime : $videoTime")

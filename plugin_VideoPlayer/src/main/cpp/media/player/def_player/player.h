@@ -27,6 +27,7 @@ public:
     void play();
     void pause();
     char* viedeotime();
+
 };
 
 
