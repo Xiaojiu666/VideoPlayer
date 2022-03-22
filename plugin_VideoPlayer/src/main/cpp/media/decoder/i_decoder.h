@@ -20,6 +20,7 @@ public:
     virtual long GetCurPos() = 0;
     virtual void SetStateReceiver(IDecodeStateCb *cb) = 0;
     virtual char* VideoTime() = 0;
+    virtual int CurrentTime() = 0;
 };
 
 

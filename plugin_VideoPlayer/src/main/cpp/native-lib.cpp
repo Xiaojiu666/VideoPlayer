@@ -7,11 +7,14 @@
 #include "media/player/def_player/player.h"
 #include "utils/logger.h"
 const char *TAG = "AVCodec info";
+
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavfilter/avfilter.h>
 #include <libavcodec/jni.h>
+int volatile gIsThreadStop = 0;
+
     JNIEXPORT jstring JNICALL
     Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_ffmpegInfo(JNIEnv *env,jobject /* this */) {
 
@@ -70,6 +73,17 @@ extern "C" {
         Player *p = (Player *) player;
         p->pause();
     }
+    https://www.cnblogs.com/seven-sky/p/7205932.html
+    JNIEXPORT void JNICALL
+    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStart(JNIEnv *env, jobject  /* this */){
+
+    }
+
+    JNIEXPORT void JNICALL
+    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStop(JNIEnv *env,
+                                                                        jobject  /* this */) {
+
+    }
 
     JNIEXPORT jstring JNICALL
     Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_videoTime(JNIEnv *env, jobject thiz,
@@ -77,4 +91,6 @@ extern "C" {
         Player *p = (Player *) player;
         return env->NewStringUTF(p->viedeotime());
     }
+
+
 }

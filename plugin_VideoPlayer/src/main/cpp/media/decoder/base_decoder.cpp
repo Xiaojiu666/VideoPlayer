@@ -362,6 +362,10 @@ void BaseDecoder::GoOn() {
     SendSignal();
 }
 
+int BaseDecoder::CurrentTime() {
+
+}
+
 
 char* BaseDecoder::VideoTime() {
     char info[40960] = {0};
@@ -370,6 +374,7 @@ char* BaseDecoder::VideoTime() {
     if(m_format_ctx->duration != AV_NOPTS_VALUE){
         int hours, mins, secs, us;
         int64_t duration = m_format_ctx->duration + 5000;
+        LOG_INFO(TAG, "LogSpec()", "VideoTime = m_format_ctx%lld",m_format_ctx->duration)
         secs = duration / AV_TIME_BASE;
         us = duration % AV_TIME_BASE;
         mins = secs / 60;

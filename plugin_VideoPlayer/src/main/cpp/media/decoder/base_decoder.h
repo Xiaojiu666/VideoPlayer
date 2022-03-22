@@ -153,6 +153,7 @@ public:
 
 
     char* VideoTime() override;
+    int CurrentTime() override;
     void GoOn() override;
     void Pause() override;
     void Stop() override;
