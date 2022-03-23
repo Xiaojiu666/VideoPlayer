@@ -7,7 +7,7 @@
 #include "../../../ffmpeg/include/libavcodec/avcodec.h"
 
 AudioDecoder::AudioDecoder(JNIEnv *env, const jstring path, bool forSynthesizer) : BaseDecoder(
-        env, path, forSynthesizer) {
+        env, nullptr ,path, forSynthesizer) {
     
 }
 
@@ -78,7 +78,7 @@ void AudioDecoder::InitRender() {
     }
 };
 
-void AudioDecoder::Render(AVFrame *frame) {
+void AudioDecoder::Render(AVFrame *frame,JNIEnv *env,jobject obj) {
     LOG_INFO(TAG, LogSpec(), "Render= %s" ,"successful")
     InitOutBuffer();
     LOG_INFO(TAG, LogSpec(), "InitOutBuffer= %s" ,"successful")

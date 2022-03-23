@@ -7,8 +7,10 @@
 #include "v_decoder.h"
 #include "../../one_frame.h"
 
-VideoDecoder::VideoDecoder(JNIEnv *env, jstring path, bool for_synthesizer)
-: BaseDecoder(env, path, for_synthesizer) {
+VideoDecoder::VideoDecoder(JNIEnv *env, jobject obj, jstring path, bool for_synthesizer)
+        : BaseDecoder(env,obj, path, for_synthesizer) {
+    m_Obj= obj;
+    m_env = env;
 }
 
 VideoDecoder::~VideoDecoder() {
@@ -62,28 +64,30 @@ void VideoDecoder::InitSws() {
                                SWS_FAST_BILINEAR, NULL, NULL, NULL);
 }
 
-void VideoDecoder::Render(AVFrame *frame,JNIEnv *env) {
-    LOG_INFO(TAG, LogSpec(), "Render= %d" , frame->key_frame)
-    LOG_INFO(TAG, LogSpec(), "Render best_effort_timestamp = %f" , frame->best_effort_timestamp *av_q2d(time_base()))
-    JNIEnv *env;
-    //get env From gJavaVm
-    //get Java class by classPath
-//    jclass thiz = env->FindClass(classPath);
-    jclass thiz = env->GetObjectClass(gJavaObj);
-    //get Java method from thiz
-    jmethodID nativeCallback = env->GetMethodID(thiz,"nativeCallback","(I)V");
-    int count = 0;
-    while(!gIsThreadStop)
-    {
-        sleep(2);
-        //env->CallVoidMethod(thiz,nativeCallback,count++);
-        env->CallVoidMethod(gJavaObj,nativeCallback,count++);
+void VideoDecoder::Render(AVFrame *frame,JNIEnv *env,jobject obj) {
+    LOG_INFO(TAG, LogSpec(), "Render= %d", frame->key_frame)
+    LOG_INFO(TAG, LogSpec(), "Render best_effort_timestamp = %f",
+             frame->best_effort_timestamp * av_q2d(time_base()))
+    if (env==nullptr){
+        LOG_ERROR(TAG, LogSpec(), "m_env is NULL")
+        return;
     }
-    gJavaVM->DetachCurrentThread();
-    LOGI("thread stoped");
+    if (env==nullptr){
+        LOG_ERROR(TAG, LogSpec(), "m_Obj is NULL")
+        return;
+    }
+    jobject gJavaObj = env->NewGlobalRef(obj);
+    jclass thiz = env->GetObjectClass(gJavaObj);
+    jmethodID nativeCallback = env->GetMethodID(thiz, "nativeCallback", "(I)V");
+    if (nativeCallback == NULL) {
+        LOGE(TAG, "nativeCallback is null")
+    }
+    env->CallVoidMethod(obj, nativeCallback, 100);
+
     sws_scale(m_sws_ctx, frame->data, frame->linesize, 0,
               height(), m_rgb_frame->data, m_rgb_frame->linesize);
-    OneFrame * one_frame = new OneFrame(m_rgb_frame->data[0], m_rgb_frame->linesize[0], frame->pts, time_base(), NULL, false);
+    OneFrame *one_frame = new OneFrame(m_rgb_frame->data[0], m_rgb_frame->linesize[0], frame->pts,
+                                       time_base(), NULL, false);
     m_video_render->Render(one_frame);
 
     if (m_state_cb != NULL) {
@@ -92,7 +96,7 @@ void VideoDecoder::Render(AVFrame *frame,JNIEnv *env) {
             Wait(0, 200);
         }
     }
-    LOG_INFO(TAG, LogSpec(), "Render= %s" ,"end")
+    LOG_INFO(TAG, LogSpec(), "Render= %s", "end")
 }
 
 bool VideoDecoder::NeedLoopDecode() {
@@ -118,3 +122,5 @@ void VideoDecoder::Release() {
         m_video_render = NULL;
     }
 }
+
+

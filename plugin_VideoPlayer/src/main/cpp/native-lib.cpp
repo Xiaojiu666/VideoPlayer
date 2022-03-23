@@ -17,8 +17,7 @@ extern "C" {
 int volatile gIsThreadStop = 0;
 
     JNIEXPORT jstring JNICALL
-    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_ffmpegInfo(JNIEnv *env,jobject /* this */) {
-
+    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_ffmpegInfo(JNIEnv *env,jobject obj /* this */) {
         char info[40000] = {0};
         AVCodec *c_temp = av_codec_next(NULL);
         while (c_temp != NULL) {
@@ -52,10 +51,12 @@ int volatile gIsThreadStop = 0;
 
     JNIEXPORT jint JNICALL
     Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_createPlayer(JNIEnv *env,
-                                                           jobject  /* this */,
+                                                           jobject obj  /* this */,
                                                            jstring path,
                                                            jobject surface) {
-        Player *player = new Player(env, path, surface);
+
+
+        Player *player = new Player(env,obj, path, surface);
         return (jint) player;
     }
 
@@ -76,8 +77,14 @@ int volatile gIsThreadStop = 0;
     }
 //    https://www.cnblogs.com/seven-sky/p/7205932.html
     JNIEXPORT void JNICALL
-    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStart(JNIEnv *env, jobject  /* this */){
-//        env.
+    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStart(JNIEnv *env, jobject obj  /* this */){
+        jobject gJavaObj = env->NewGlobalRef(obj);
+        jclass thiz = env->GetObjectClass(gJavaObj);
+        jmethodID nativeCallback = env->GetMethodID(thiz,"nativeCallback","(I)V");
+        if (nativeCallback == NULL){
+            LOGE(TAG, "nativeCallback is null")
+        }
+        env->CallVoidMethod(obj,nativeCallback,100);
     }
 
 

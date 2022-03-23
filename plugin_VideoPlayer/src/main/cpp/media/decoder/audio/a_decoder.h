@@ -92,7 +92,7 @@ public:
 
 protected:
     void Prepare(JNIEnv *env) override;
-    void Render(AVFrame *frame) override;
+    void Render(AVFrame *frame,JNIEnv *env,jobject obj) override;
     void Release() override;
 
     bool NeedLoopDecode() override {

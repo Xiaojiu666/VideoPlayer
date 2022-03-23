@@ -36,6 +36,10 @@ private:
     //视频渲染器
     VideoRender *m_video_render = NULL;
 
+    jobject m_Obj;
+
+    JNIEnv *m_env;
+
     //显示的目标宽
     int m_dst_w;
     //显示的目标高
@@ -58,7 +62,7 @@ private:
     void InitSws();
 
 public:
-    VideoDecoder(JNIEnv *env, jstring path, bool for_synthesizer = false);
+    VideoDecoder(JNIEnv *env, jobject obj, jstring path, bool for_synthesizer = false);
     ~VideoDecoder();
     void SetRender(VideoRender *render);
 
@@ -84,7 +88,7 @@ protected:
      * 注：在解码线程中回调
      * @param frame 解码RGBA数据
      */
-    void Render(AVFrame *frame,JNIEnv *env) override;
+    void Render(AVFrame *frame,JNIEnv *env,jobject obj) override;
 
     /**
      * 释放回调

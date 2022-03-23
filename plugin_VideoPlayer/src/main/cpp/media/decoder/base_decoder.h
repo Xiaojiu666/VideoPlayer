@@ -97,12 +97,12 @@ private:
     /**
      * 新建解码线程
      */
-    void CreateDecodeThread();
+    void CreateDecodeThread(jobject obj);
 
     /**
      * 循环解码
      */
-    void LoopDecode();
+    void LoopDecode(JNIEnv *env,jobject obj);
 
     /**
      * 获取当前帧时间戳
@@ -119,7 +119,7 @@ private:
      * 静态解码方法，用于解码线程回调
      * @param that 当前解码器
      */
-    static void Decode(std::shared_ptr<BaseDecoder> that);
+    static void Decode(std::shared_ptr<BaseDecoder> that,jobject obj);
 
     /**
      * 时间同步
@@ -127,7 +127,7 @@ private:
     void SyncRender();
 
 public:
-    BaseDecoder(JNIEnv *env, jstring path, bool for_synthesizer);
+    BaseDecoder(JNIEnv *env,jobject obj, jstring path, bool for_synthesizer);
     virtual ~BaseDecoder();
 
     /**
@@ -242,7 +242,7 @@ protected:
      * @note 注：在解码线程中回调
      * @param frame 视频：一帧YUV数据；音频：一帧PCM数据
      */
-    virtual void Render(AVFrame *frame) = 0;
+    virtual void Render(AVFrame *frame,JNIEnv *env,jobject obj) = 0;
 
     /**
      * 子类释放资源回调方法
