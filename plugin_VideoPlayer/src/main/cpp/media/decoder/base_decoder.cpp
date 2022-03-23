@@ -41,11 +41,28 @@ void BaseDecoder::CreateDecodeThread(jobject obj) {
 void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that,jobject obj) {
     JNIEnv *env;
 
+
     //将线程附加到虚拟机，并获取env
     if (that->m_jvm_for_thread->AttachCurrentThread(&env, NULL) != JNI_OK) {
         LOG_ERROR(that->TAG, that->LogSpec(), "Fail to Init decode thread");
         return;
     }
+    if (env == NULL){
+        LOGE("Decode", "env is null")
+        return;
+    }
+
+    if (obj == NULL){
+        LOGE("Decode", "obj is null")
+        return;
+    }
+    jobject gJavaObj = env->NewGlobalRef(obj);
+    jclass thiz = env->GetObjectClass(gJavaObj);
+    jmethodID nativeCallback = env->GetMethodID(thiz,"nativeCallback","(I)V");
+    if (nativeCallback == NULL){
+        LOGE("Decode", "nativeCallback is null")
+    }
+    env->CallVoidMethod(obj,nativeCallback,100);
 
     that->CallbackState(PREPARE);
 

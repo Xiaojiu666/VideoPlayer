@@ -9,8 +9,13 @@
 
 VideoDecoder::VideoDecoder(JNIEnv *env, jobject obj, jstring path, bool for_synthesizer)
         : BaseDecoder(env,obj, path, for_synthesizer) {
-    m_Obj= obj;
-    m_env = env;
+    jobject gJavaObj = env->NewGlobalRef(obj);
+    jclass thiz = env->GetObjectClass(gJavaObj);
+    jmethodID nativeCallback = env->GetMethodID(thiz,"nativeCallback","(I)V");
+    if (nativeCallback == NULL){
+        LOGE(TAG, "nativeCallback is null")
+    }
+    env->CallVoidMethod(obj,nativeCallback,100);
 }
 
 VideoDecoder::~VideoDecoder() {
@@ -68,21 +73,21 @@ void VideoDecoder::Render(AVFrame *frame,JNIEnv *env,jobject obj) {
     LOG_INFO(TAG, LogSpec(), "Render= %d", frame->key_frame)
     LOG_INFO(TAG, LogSpec(), "Render best_effort_timestamp = %f",
              frame->best_effort_timestamp * av_q2d(time_base()))
-    if (env==nullptr){
-        LOG_ERROR(TAG, LogSpec(), "m_env is NULL")
-        return;
-    }
-    if (env==nullptr){
-        LOG_ERROR(TAG, LogSpec(), "m_Obj is NULL")
-        return;
-    }
-    jobject gJavaObj = env->NewGlobalRef(obj);
-    jclass thiz = env->GetObjectClass(gJavaObj);
-    jmethodID nativeCallback = env->GetMethodID(thiz, "nativeCallback", "(I)V");
-    if (nativeCallback == NULL) {
-        LOGE(TAG, "nativeCallback is null")
-    }
-    env->CallVoidMethod(obj, nativeCallback, 100);
+//    if (env==nullptr){
+//        LOG_ERROR(TAG, LogSpec(), "m_env is NULL")
+//        return;
+//    }
+//    if (env==nullptr){
+//        LOG_ERROR(TAG, LogSpec(), "m_Obj is NULL")
+//        return;
+//    }
+//    jobject gJavaObj = env->NewGlobalRef(obj);
+//    jclass thiz = env->GetObjectClass(gJavaObj);
+//    jmethodID nativeCallback = env->GetMethodID(thiz, "nativeCallback", "(I)V");
+//    if (nativeCallback == NULL) {
+//        LOGE(TAG, "nativeCallback is null")
+//    }
+//    env->CallVoidMethod(obj, nativeCallback, 100);
 
     sws_scale(m_sws_ctx, frame->data, frame->linesize, 0,
               height(), m_rgb_frame->data, m_rgb_frame->linesize);
