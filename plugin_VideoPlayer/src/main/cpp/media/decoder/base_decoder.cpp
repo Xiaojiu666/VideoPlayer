@@ -56,6 +56,7 @@ void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that,jobject obj) {
         LOGE("Decode", "obj is null")
         return;
     }
+    //http://blog.sina.com.cn/s/blog_439abfdd0101iql1.html
     jobject gJavaObj = env->NewGlobalRef(obj);
     jclass thiz = env->GetObjectClass(gJavaObj);
     jmethodID nativeCallback = env->GetMethodID(thiz,"nativeCallback","(I)V");
