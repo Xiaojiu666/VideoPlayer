@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.sn.videoplayer.data.Config
 import com.sn.videoplayer.ffmpeg.demo.DemoNativeInterface
 import com.sn.videoplayer.ffmpeg.demo.FFmpegPlayer
+import com.sn.videoplayer.ffmpeg.demo.PlayProgress
 import com.sn.videoplayer.media_codec.Frame
 import com.sn.videoplayer.media_codec.decoder.AudioDecoder
 import com.sn.videoplayer.media_codec.decoder.BaseDecoder
@@ -19,14 +20,21 @@ import com.sn.videoplayer.media_codec.decoder.VideoDecoder
 import kotlinx.android.synthetic.main.activity_video.*
 import java.util.concurrent.Executors
 
-class VideoActivity : AppCompatActivity(){
+class VideoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
         val fFmpegPlayer = FFmpegPlayer()
         val fFmpegInfo = fFmpegPlayer.getFFmpegInfo()
         var initVideoPlayer = 0
-        textView.text =fFmpegInfo
+        textView.text = fFmpegInfo
+        Thread(Runnable {
+            DemoNativeInterface.setProgress(PlayProgress {
+                runOnUiThread {
+                    seekBar.setCurrentTime(it.toInt())
+                }
+            })
+        }).start()
 
 
         sfv!!.holder!!.addCallback(object : SurfaceHolder.Callback {
@@ -42,12 +50,12 @@ class VideoActivity : AppCompatActivity(){
             }
 
             override fun surfaceCreated(holder: SurfaceHolder) {
-                initVideoPlayer  = fFmpegPlayer.initVideoPlayer(holder.surface, Config.FILE_PATH)
-                Log.e(TAG,"initVideoPlayer : $initVideoPlayer")
+                initVideoPlayer = fFmpegPlayer.initVideoPlayer(holder.surface, Config.FILE_PATH)
+                Log.e(TAG, "initVideoPlayer : $initVideoPlayer")
                 Thread(Runnable {
                     runOnUiThread {
                         var videoTime = fFmpegPlayer.getVideoTime(initVideoPlayer)
-                        Log.e(TAG,"videoTime : $videoTime")
+                        Log.e(TAG, "videoTime : $videoTime")
                         seekBar.setTotalTime(videoTime)
                     }
                 }).start()
@@ -62,6 +70,9 @@ class VideoActivity : AppCompatActivity(){
 
         video_stop.setOnClickListener {
             fFmpegPlayer.stop(initVideoPlayer)
+        }
+        video_seek_after.setOnClickListener {
+            DemoNativeInterface.threadStart()
         }
     }
 

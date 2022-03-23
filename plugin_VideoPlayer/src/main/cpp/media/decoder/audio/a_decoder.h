@@ -85,14 +85,14 @@ private:
     }
 
 public:
-    AudioDecoder(JNIEnv *env, const jstring path, bool forSynthesizer);
+    AudioDecoder(JNIEnv *env, jobject obj, const jstring path, bool forSynthesizer);
     ~AudioDecoder();
 
     void SetRender(AudioRender *render);
 
 protected:
     void Prepare(JNIEnv *env) override;
-    void Render(AVFrame *frame) override;
+    void Render(AVFrame *frame,JNIEnv *env,jobject obj) override;
     void Release() override;
 
     bool NeedLoopDecode() override {

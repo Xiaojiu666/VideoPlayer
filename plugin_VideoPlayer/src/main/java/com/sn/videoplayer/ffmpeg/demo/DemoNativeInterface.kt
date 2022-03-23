@@ -1,8 +1,10 @@
 package com.sn.videoplayer.ffmpeg.demo
 
+import android.util.Log
 import android.view.Surface
 
 object DemoNativeInterface {
+
     external fun ffmpegInfo(): String? //    public static native String ffmpegInfo();
 
     external fun createPlayer(path: String, surface: Surface): Int
@@ -11,11 +13,22 @@ object DemoNativeInterface {
 
     external fun pause(player: Int)
 
-    external fun videoTime(player: Int):String
+    external fun videoTime(player: Int): String
 
     external fun threadStart();
 
     external fun threadStop();
+
+    fun nativeCallback(double: Double) {
+        Log.d("DemoNativeInterface", "nativeCallback $double");
+        mPlayProgress.progress(double)
+    }
+
+    lateinit var mPlayProgress: PlayProgress;
+
+    fun setProgress(playProgress: PlayProgress) {
+        mPlayProgress = playProgress
+    }
 
     init {
         System.loadLibrary("native-lib")

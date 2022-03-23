@@ -7,7 +7,7 @@
     android:layout_height="wrap_content">
 
     <SeekBar
-        android:id="@+id/seekBar2"
+        android:id="@+id/seek_time_progress"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -16,11 +16,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_seek_current_time" />
 
     <TextView
         android:textColor="#FFF"
-        android:id="@+id/textView2"
+        android:id="@+id/tv_seek_current_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

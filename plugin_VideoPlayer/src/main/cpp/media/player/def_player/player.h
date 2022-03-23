@@ -20,8 +20,9 @@ private:
     AudioDecoder *m_a_decoder;
     AudioRender *m_a_render;
 
+
 public:
-    Player(JNIEnv *jniEnv, jstring path, jobject surface);
+    Player(JNIEnv *jniEnv,jobject obj, jstring path, jobject surface);
     ~Player();
 
     void play();

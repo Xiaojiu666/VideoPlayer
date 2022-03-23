@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include "media/player/def_player/player.h"
 #include "utils/logger.h"
+
 const char *TAG = "AVCodec info";
 
 extern "C" {
@@ -15,82 +16,84 @@ extern "C" {
 #include <libavcodec/jni.h>
 int volatile gIsThreadStop = 0;
 
-    JNIEXPORT jstring JNICALL
-    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_ffmpegInfo(JNIEnv *env,jobject /* this */) {
+JNIEXPORT jstring JNICALL
+Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_ffmpegInfo(JNIEnv *env,
+                                                                   jobject /* this */) {
 
-        char info[40000] = {0};
-        AVCodec *c_temp = av_codec_next(NULL);
-        while (c_temp != NULL) {
-            if (c_temp->decode != NULL) {
-                //数据写入某个字符串中
+    char info[40000] = {0};
+    AVCodec *c_temp = av_codec_next(NULL);
+    while (c_temp != NULL) {
+        if (c_temp->decode != NULL) {
+            //数据写入某个字符串中
 //                sprintf(info, "decode: %s", info);
 //                LOGE(TAG, "decode before info %s",info)
-                switch (c_temp->type) {
-                    case AVMEDIA_TYPE_VIDEO:
-                        sprintf(info, "%s(video):", info);
+            switch (c_temp->type) {
+                case AVMEDIA_TYPE_VIDEO:
+                    sprintf(info, "%s(video):", info);
 //                        LOGE(TAG, "%s(video):", info)
-                        break;
-                    case AVMEDIA_TYPE_AUDIO:
-                        sprintf(info, "%s(audio):", info);
-                        break;
-                    default:
-                        sprintf(info, "%s(other):", info);
-                        break;
-                }
-                LOGE(TAG, "decode after %s",info)
-                sprintf(info, "%s[%10s]\n", info, c_temp->name);
-                LOGE(TAG, "c_temp->name %s", c_temp->name)
-            } else {
-//                sprintf(info, "%sencode:", info);
+                    break;
+                case AVMEDIA_TYPE_AUDIO:
+                    sprintf(info, "%s(audio):", info);
+                    break;
+                default:
+                    sprintf(info, "%s(other):", info);
+                    break;
             }
-            c_temp = c_temp->next; // ->等于取值
+            LOGE(TAG, "decode after %s", info)
+            sprintf(info, "%s[%10s]\n", info, c_temp->name);
+            LOGE(TAG, "c_temp->name %s", c_temp->name)
+        } else {
+//                sprintf(info, "%sencode:", info);
         }
-
-        return env->NewStringUTF(info);
+        c_temp = c_temp->next; // ->等于取值
     }
 
-    JNIEXPORT jint JNICALL
-    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_createPlayer(JNIEnv *env,
-                                                           jobject  /* this */,
-                                                           jstring path,
-                                                           jobject surface) {
-        Player *player = new Player(env, path, surface);
-        return (jint) player;
-    }
+    return env->NewStringUTF(info);
+}
 
-    JNIEXPORT void JNICALL
-    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_play(JNIEnv *env,
-                                                   jobject  /* this */,
-                                                   jint player) {
-        Player *p = (Player *) player;
-        p->play();
-    }
+JNIEXPORT jint JNICALL
+Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_createPlayer(JNIEnv *env,
+                                                                     jobject obj/* this */,
+                                                                     jstring path,
+                                                                     jobject surface) {
+    Player *player = new Player(env, obj, path, surface);
+    return (jint) player;
+}
 
-    JNIEXPORT void JNICALL
-    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_pause(JNIEnv *env,
-                                                    jobject  /* this */,
-                                                    jint player) {
-        Player *p = (Player *) player;
-        p->pause();
-    }
+JNIEXPORT void JNICALL
+Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_play(JNIEnv *env,
+                                                             jobject  /* this */,
+                                                             jint player) {
+    Player *p = (Player *) player;
+    p->play();
+}
+
+JNIEXPORT void JNICALL
+Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_pause(JNIEnv *env,
+                                                              jobject  /* this */,
+                                                              jint player) {
+    Player *p = (Player *) player;
+    p->pause();
+}
 //    https://www.cnblogs.com/seven-sky/p/7205932.html
-    JNIEXPORT void JNICALL
-    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStart(JNIEnv *env, jobject  /* this */){
+JNIEXPORT void JNICALL
+Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStart(JNIEnv *env,
+                                                                    jobject  /* this */) {
 
-    }
+}
 
-    JNIEXPORT void JNICALL
-    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStop(JNIEnv *env,
-                                                                        jobject  /* this */) {
+JNIEXPORT void JNICALL
+Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStop(JNIEnv *env,
+                                                                   jobject  /* this */) {
 
-    }
+}
 
-    JNIEXPORT jstring JNICALL
-    Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_videoTime(JNIEnv *env, jobject thiz,
-                                                                      jint player) {
-        Player *p = (Player *) player;
-        return env->NewStringUTF(p->viedeotime());
-    }
+JNIEXPORT jstring JNICALL
+Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_videoTime(JNIEnv *env, jobject thiz,
+                                                                  jint player) {
+    Player *p = (Player *) player;
+    return env->NewStringUTF(p->viedeotime());
+}
 
 
 }
