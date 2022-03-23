@@ -7,14 +7,15 @@
 #include "base_decoder.h"
 #include "../../utils/timer.c"
 
-BaseDecoder::BaseDecoder(JNIEnv *env,jobject obj, jstring path, bool for_synthesizer)
+BaseDecoder::BaseDecoder(JNIEnv *env, jobject obj, jstring path, bool for_synthesizer)
         : m_for_synthesizer(for_synthesizer) {
     LOG_ERROR("BaseDecoder", "LogSpec()", "Init w start");
+    m_obj = env->NewGlobalRef(obj);
     Init(env, path);
     LOG_ERROR("BaseDecoder", "LogSpec()", "InitFFMpegDecoder w start");
 //    InitFFMpegDecoder(env);
     LOG_ERROR("BaseDecoder", "LogSpec()", "InitFFMpegDecoder successful");
-    CreateDecodeThread(obj);
+    CreateDecodeThread(m_obj);
 }
 
 void BaseDecoder::Init(JNIEnv *env, jstring path) {
@@ -34,11 +35,11 @@ BaseDecoder::~BaseDecoder() {
 void BaseDecoder::CreateDecodeThread(jobject obj) {
     // 使用智能指针，线程结束时，自动删除本类指针
     std::shared_ptr<BaseDecoder> that(this);
-    std::thread t(Decode, that,obj);
+    std::thread t(Decode, that, obj);
     t.detach();
 }
 
-void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that,jobject obj) {
+void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that, jobject obj) {
     JNIEnv *env;
 
 
@@ -47,23 +48,23 @@ void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that,jobject obj) {
         LOG_ERROR(that->TAG, that->LogSpec(), "Fail to Init decode thread");
         return;
     }
-    if (env == NULL){
+    if (env == NULL) {
         LOGE("Decode", "env is null")
         return;
     }
-
-    if (obj == NULL){
+    if (obj == NULL) {
         LOGE("Decode", "obj is null")
         return;
     }
+
     //http://blog.sina.com.cn/s/blog_439abfdd0101iql1.html
     jobject gJavaObj = env->NewGlobalRef(obj);
     jclass thiz = env->GetObjectClass(gJavaObj);
-    jmethodID nativeCallback = env->GetMethodID(thiz,"nativeCallback","(I)V");
-    if (nativeCallback == NULL){
+    jmethodID nativeCallback = env->GetMethodID(thiz, "nativeCallback", "(I)V");
+    if (nativeCallback == NULL) {
         LOGE("Decode", "nativeCallback is null")
     }
-    env->CallVoidMethod(obj,nativeCallback,100);
+    env->CallVoidMethod(obj, nativeCallback, 10000);
 
     that->CallbackState(PREPARE);
 
@@ -74,7 +75,7 @@ void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that,jobject obj) {
     av_usleep(1000);
     that->Prepare(env);
     LOG_ERROR(that->TAG, that->LogSpec(), "Prepare successful");
-    that->LoopDecode(env,obj);
+    that->LoopDecode(env, obj);
     LOG_ERROR(that->TAG, that->LogSpec(), "LoopDecode successful");
     that->DoneDecode(env);
     LOG_ERROR(that->TAG, that->LogSpec(), "DoneDecode successful");
@@ -163,7 +164,7 @@ void BaseDecoder::AllocFrameBuffer() {
     m_frame = av_frame_alloc();
 }
 
-void BaseDecoder::LoopDecode(JNIEnv *env,jobject obj) {
+void BaseDecoder::LoopDecode(JNIEnv *env, jobject obj) {
     if (STOP == m_state) { // 如果已被外部改变状态，维持外部配置
         m_state = START;
     }
@@ -193,7 +194,7 @@ void BaseDecoder::LoopDecode(JNIEnv *env,jobject obj) {
         if (DecodeOneFrame() != NULL) {
             LOG_INFO(TAG, LogSpec(), "DecodeOneFrame= %s", "successful")
             SyncRender();
-            Render(m_frame,env,obj);
+            Render(m_frame, env, obj);
             LOG_INFO(TAG, LogSpec(), "LoopDecode Render= %s", "end")
             if (m_state == START) {
                 m_state = PAUSE;

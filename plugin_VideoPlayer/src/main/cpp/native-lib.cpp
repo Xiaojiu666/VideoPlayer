@@ -78,6 +78,7 @@ int volatile gIsThreadStop = 0;
 //    https://www.cnblogs.com/seven-sky/p/7205932.html
     JNIEXPORT void JNICALL
     Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStart(JNIEnv *env, jobject obj  /* this */){
+
         jobject gJavaObj = env->NewGlobalRef(obj);
         jclass thiz = env->GetObjectClass(gJavaObj);
         jmethodID nativeCallback = env->GetMethodID(thiz,"nativeCallback","(I)V");

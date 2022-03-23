@@ -36,10 +36,6 @@ private:
     //视频渲染器
     VideoRender *m_video_render = NULL;
 
-    jobject m_Obj;
-
-    JNIEnv *m_env;
-
     //显示的目标宽
     int m_dst_w;
     //显示的目标高

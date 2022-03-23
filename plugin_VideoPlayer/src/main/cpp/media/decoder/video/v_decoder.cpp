@@ -73,11 +73,12 @@ void VideoDecoder::Render(AVFrame *frame,JNIEnv *env,jobject obj) {
     LOG_INFO(TAG, LogSpec(), "Render= %d", frame->key_frame)
     LOG_INFO(TAG, LogSpec(), "Render best_effort_timestamp = %f",
              frame->best_effort_timestamp * av_q2d(time_base()))
+
 //    if (env==nullptr){
 //        LOG_ERROR(TAG, LogSpec(), "m_env is NULL")
 //        return;
 //    }
-//    if (env==nullptr){
+//    if (m_Obj==nullptr){
 //        LOG_ERROR(TAG, LogSpec(), "m_Obj is NULL")
 //        return;
 //    }
@@ -87,7 +88,7 @@ void VideoDecoder::Render(AVFrame *frame,JNIEnv *env,jobject obj) {
 //    if (nativeCallback == NULL) {
 //        LOGE(TAG, "nativeCallback is null")
 //    }
-//    env->CallVoidMethod(obj, nativeCallback, 100);
+//    env->CallVoidMethod(obj, nativeCallback, 9999);
 
     sws_scale(m_sws_ctx, frame->data, frame->linesize, 0,
               height(), m_rgb_frame->data, m_rgb_frame->linesize);

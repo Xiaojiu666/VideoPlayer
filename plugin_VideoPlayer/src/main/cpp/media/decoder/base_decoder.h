@@ -43,6 +43,9 @@ private:
     // 最终解码数据
     AVFrame *m_frame = NULL;
 
+
+
+
     // 当前播放时间
     int64_t m_cur_t_s = 0;
 
@@ -54,6 +57,7 @@ private:
 
     // 解码状态
     DecodeState m_state = STOP;
+
 
     // 数据流索引
     int m_stream_index = -1;
@@ -129,7 +133,7 @@ private:
 public:
     BaseDecoder(JNIEnv *env,jobject obj, jstring path, bool for_synthesizer);
     virtual ~BaseDecoder();
-
+    jobject m_obj = NULL;
     /**
      * 视频宽度
      * @return
