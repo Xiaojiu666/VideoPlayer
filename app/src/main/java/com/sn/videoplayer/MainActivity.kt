@@ -6,8 +6,14 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
+import com.sn.videoplayer.data.Config
 import com.sn.videoplayer.data.GuideTitle
 import com.sn.videoplayer.view.GuideAdapter
+import com.sn.videoplayer.worker.CopyFileWork
+import com.sn.videoplayer.worker.CopyFileWork.Companion.KEY_FILEPATH
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
@@ -38,6 +44,10 @@ class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
             guideAdapter
         guide_recyclerView.addItemDecoration(DividerItemDecoration(baseContext, LinearLayoutManager.VERTICAL))
         guideAdapter.onClickListener = this
+        val request = OneTimeWorkRequestBuilder<CopyFileWork>()
+            .setInputData(workDataOf(KEY_FILEPATH to Config.FILE_PATH))
+            .build()
+        WorkManager.getInstance(baseContext).enqueue(request)
     }
 
     override fun onClick(view: View, position: Int) {

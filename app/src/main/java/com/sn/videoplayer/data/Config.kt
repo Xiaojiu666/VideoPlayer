@@ -4,5 +4,5 @@ import android.os.Environment
 
 object Config {
     val FILE_PATH =
-        Environment.getExternalStorageDirectory().absolutePath + "/lake.mp4"
+        Environment.getExternalStorageDirectory().absolutePath + "/MP4/lake.mp4"
 }
