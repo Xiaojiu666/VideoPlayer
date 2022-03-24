@@ -30,4 +30,8 @@ class FFmpegPlayer : PlayerControl() {
         return DemoNativeInterface.videoTime(playId)
     }
 
+    fun getVideoTotalTime(playId: Int):Int{
+        return DemoNativeInterface.videoTotalTime(playId)
+    }
+
 }

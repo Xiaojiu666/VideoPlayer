@@ -13,14 +13,24 @@
 class IDecoder {
 public:
     virtual void GoOn() = 0;
+
     virtual void Pause() = 0;
+
     virtual void Stop() = 0;
+
     virtual bool IsRunning() = 0;
+
     virtual long GetDuration() = 0;
+
     virtual long GetCurPos() = 0;
+
     virtual void SetStateReceiver(IDecodeStateCb *cb) = 0;
-    virtual char* VideoTime() = 0;
+
+    virtual char *VideoTime() = 0;
+
     virtual int CurrentTime() = 0;
+
+    virtual int VideoTotalTime() = 0;
 };
 
 

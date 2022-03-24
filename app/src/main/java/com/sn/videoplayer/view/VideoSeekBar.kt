@@ -29,11 +29,14 @@ class VideoSeekBar @JvmOverloads constructor(
         tvSeekBarTotalTime.text = totalTime
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    fun setTotalTime(totalTime: Int) {
+        seek_time_progress.max = totalTime
+        tvSeekBarTotalTime.text = formatSeconds(totalTime)
+    }
+
     fun setCurrentTime(double: Int) {
         seek_time_progress.progress = double;
-        val duration: Duration = Duration.ofSeconds(double.toLong())
-        Log.d("setCurrentTime",formatSeconds(double))
+        Log.d("setCurrentTime", formatSeconds(double))
         tv_seek_current_time.text = formatSeconds(double)
     }
 

@@ -43,10 +43,16 @@ void Player::pause() {
     }
 }
 
-char *Player::viedeotime() {
+char* Player::viedeotime() {
     if (m_v_decoder != NULL) {
         char *string = m_v_decoder->VideoTime();
         return string;
     }
     return NULL;
+}
+int Player::videoTimeTotal() {
+    if (m_v_decoder != NULL) {
+        return m_v_decoder->VideoTotalTime();;
+    }
+    return 0;
 }

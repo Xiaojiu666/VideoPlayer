@@ -95,5 +95,12 @@ Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_videoTime(JNIEnv *env, j
     return env->NewStringUTF(p->viedeotime());
 }
 
+JNIEXPORT jint JNICALL
+Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_videoTotalTime(JNIEnv *env, jobject thiz,
+                                                                  jint player) {
+    Player *p = (Player *) player;
+    return (jint) p->videoTimeTotal();
+}
+
 
 }

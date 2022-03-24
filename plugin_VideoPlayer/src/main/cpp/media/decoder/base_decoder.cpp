@@ -401,6 +401,26 @@ int BaseDecoder::CurrentTime() {
 }
 
 
+int BaseDecoder::VideoTotalTime() {
+    char info[40960] = {0};
+    //4，获取音视频流信息
+    LOG_INFO(TAG, "LogSpec()", "VideoTime = start")
+    if (m_format_ctx->duration != AV_NOPTS_VALUE) {
+        int hours, mins, secs, us;
+        int64_t duration = m_format_ctx->duration + 5000;
+        LOG_INFO(TAG, "LogSpec()", "VideoTime = m_format_ctx%lld", m_format_ctx->duration)
+//        secs = duration / AV_TIME_BASE;
+//        us = duration % AV_TIME_BASE;
+//        mins = secs / 60;
+//        secs %= 60;
+//        hours = mins / 60;
+//        mins %= 60;
+        return duration / AV_TIME_BASE;
+    }
+    LOG_INFO(TAG, "LogSpec()", "VideoTotalTime = 0")
+    return 0;
+}
+
 char *BaseDecoder::VideoTime() {
     char info[40960] = {0};
     //4，获取音视频流信息

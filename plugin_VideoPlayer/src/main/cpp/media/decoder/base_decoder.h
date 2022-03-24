@@ -21,7 +21,7 @@ extern "C" {
 #include <libavutil/time.h>
 };
 
-class BaseDecoder: public IDecoder {
+class BaseDecoder : public IDecoder {
 
 private:
 
@@ -42,8 +42,6 @@ private:
 
     // 最终解码数据
     AVFrame *m_frame = NULL;
-
-
 
 
     // 当前播放时间
@@ -91,7 +89,7 @@ private:
      * 初始化FFMpeg相关的参数
      * @param env jvm环境
      */
-    void InitFFMpegDecoder(JNIEnv * env);
+    void InitFFMpegDecoder(JNIEnv *env);
 
     /**
      * 分配解码过程中需要的缓存
@@ -106,7 +104,7 @@ private:
     /**
      * 循环解码
      */
-    void LoopDecode(JNIEnv *env,jobject obj);
+    void LoopDecode(JNIEnv *env, jobject obj);
 
     /**
      * 获取当前帧时间戳
@@ -123,7 +121,7 @@ private:
      * 静态解码方法，用于解码线程回调
      * @param that 当前解码器
      */
-    static void Decode(std::shared_ptr<BaseDecoder> that,jobject obj);
+    static void Decode(std::shared_ptr<BaseDecoder> that, jobject obj);
 
     /**
      * 时间同步
@@ -131,9 +129,12 @@ private:
     void SyncRender();
 
 public:
-    BaseDecoder(JNIEnv *env,jobject obj, jstring path, bool for_synthesizer);
+    BaseDecoder(JNIEnv *env, jobject obj, jstring path, bool for_synthesizer);
+
     virtual ~BaseDecoder();
+
     jobject m_obj = NULL;
+
     /**
      * 视频宽度
      * @return
@@ -156,13 +157,22 @@ public:
     }
 
 
-    char* VideoTime() override;
+    char *VideoTime() override;
+
+    int VideoTotalTime() override;
+
     int CurrentTime() override;
+
     void GoOn() override;
+
     void Pause() override;
+
     void Stop() override;
+
     bool IsRunning() override;
+
     long GetDuration() override;
+
     long GetCurPos() override;
 
     void SetStateReceiver(IDecodeStateCb *cb) override {
@@ -171,12 +181,18 @@ public:
 
     char *GetStateStr() {
         switch (m_state) {
-            case STOP: return (char *)"STOP";
-            case START: return (char *)"START";
-            case DECODING: return (char *)"DECODING";
-            case PAUSE: return (char *)"PAUSE";
-            case FINISH: return (char *)"FINISH";
-            default: return (char *)"UNKNOW";
+            case STOP:
+                return (char *) "STOP";
+            case START:
+                return (char *) "START";
+            case DECODING:
+                return (char *) "DECODING";
+            case PAUSE:
+                return (char *) "PAUSE";
+            case FINISH:
+                return (char *) "FINISH";
+            default:
+                return (char *) "UNKNOW";
         }
     }
 
@@ -191,7 +207,7 @@ protected:
         return m_for_synthesizer;
     }
 
-    const char * path() {
+    const char *path() {
         return m_path;
     }
 
@@ -222,7 +238,7 @@ protected:
      * 解码一帧数据
      * @return
      */
-    AVFrame* DecodeOneFrame();
+    AVFrame *DecodeOneFrame();
 
     /**
      * 音视频索引
@@ -246,7 +262,7 @@ protected:
      * @note 注：在解码线程中回调
      * @param frame 视频：一帧YUV数据；音频：一帧PCM数据
      */
-    virtual void Render(AVFrame *frame,JNIEnv *env,jobject obj) = 0;
+    virtual void Render(AVFrame *frame, JNIEnv *env, jobject obj) = 0;
 
     /**
      * 子类释放资源回调方法

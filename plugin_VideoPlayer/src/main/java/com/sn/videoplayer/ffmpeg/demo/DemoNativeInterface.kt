@@ -15,6 +15,8 @@ object DemoNativeInterface {
 
     external fun videoTime(player: Int): String
 
+    external fun videoTotalTime(player: Int): Int
+
     external fun threadStart();
 
     external fun threadStop();

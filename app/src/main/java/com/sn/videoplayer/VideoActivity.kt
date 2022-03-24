@@ -54,7 +54,8 @@ class VideoActivity : AppCompatActivity() {
                 Log.e(TAG, "initVideoPlayer : $initVideoPlayer")
                 Thread(Runnable {
                     runOnUiThread {
-                        var videoTime = fFmpegPlayer.getVideoTime(initVideoPlayer)
+//                        var videoTime = fFmpegPlayer.getVideoTime(initVideoPlayer)
+                        var videoTime = fFmpegPlayer.getVideoTotalTime(initVideoPlayer)
                         Log.e(TAG, "videoTime : $videoTime")
                         seekBar.setTotalTime(videoTime)
                     }

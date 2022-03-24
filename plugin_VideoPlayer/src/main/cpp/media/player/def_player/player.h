@@ -28,6 +28,7 @@ public:
     void play();
     void pause();
     char* viedeotime();
+    int videoTimeTotal();
 
 };
 
