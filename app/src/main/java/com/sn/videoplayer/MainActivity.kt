@@ -2,11 +2,14 @@ package com.sn.videoplayer
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.sn.videoplayer.data.Config
@@ -16,12 +19,13 @@ import com.sn.videoplayer.worker.CopyFileWork
 import com.sn.videoplayer.worker.CopyFileWork.Companion.KEY_FILEPATH
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
+import java.util.logging.Logger
 
 class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
-
+    var TAG = "MainActivity"
     var titles = arrayOf("音视频编解码")
     var descs = arrayOf("音视频编解码(包含软编码FFmpeg /硬编码MediaCodeC)")
-    var data  = ArrayList<GuideTitle>()
+    var data = ArrayList<GuideTitle>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +37,7 @@ class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
 
     private fun initData() {
         for (x in titles.indices) {
-            data.add(GuideTitle(titles[x],descs[x]))
+            data.add(GuideTitle(titles[x], descs[x]))
         }
     }
 
@@ -42,21 +46,34 @@ class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
         val guideAdapter = GuideAdapter(data, baseContext)
         guide_recyclerView.adapter =
             guideAdapter
-        guide_recyclerView.addItemDecoration(DividerItemDecoration(baseContext, LinearLayoutManager.VERTICAL))
+        guide_recyclerView.addItemDecoration(
+            DividerItemDecoration(
+                baseContext,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         guideAdapter.onClickListener = this
         val request = OneTimeWorkRequestBuilder<CopyFileWork>()
             .setInputData(workDataOf(KEY_FILEPATH to Config.FILE_PATH))
             .build()
         WorkManager.getInstance(baseContext).enqueue(request)
+        WorkManager.getInstance(baseContext).getWorkInfoByIdLiveData(request.id)
+            .observe(this, Observer<WorkInfo> {
+                Log.d(TAG, "state " + it.state)
+                if (it.state == WorkInfo.State.FAILED) {
+                    var outputData = it.getOutputData().getString("out_put")
+                    Log.d(TAG, "outputData $outputData")
+                }
+            })
     }
 
     override fun onClick(view: View, position: Int) {
-       when(position){
-           0 -> {
-               val intent = Intent(MainActivity@ this, VideoActivity::class.java)
-               startActivity(intent)
-           }
-       }
+        when (position) {
+            0 -> {
+                val intent = Intent(MainActivity@ this, VideoActivity::class.java)
+                startActivity(intent)
+            }
+        }
     }
 
 }
