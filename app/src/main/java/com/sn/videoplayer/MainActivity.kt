@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
             .observe(this, Observer<WorkInfo> {
                 Log.d(TAG, "state " + it.state)
                 if (it.state == WorkInfo.State.FAILED) {
-                    var outputData = it.getOutputData().getString("out_put")
+                    val outputData = it.getOutputData().getString("out_put")
                     Log.d(TAG, "outputData $outputData")
                 }
             })

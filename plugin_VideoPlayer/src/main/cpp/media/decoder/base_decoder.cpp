@@ -109,12 +109,6 @@ void BaseDecoder::InitFFMpegDecoder(JNIEnv *env) {
     //4.1 获取视频流的索引
     int vIdx = -1;//存放视频流的索引
     for (int i = 0; i < m_format_ctx->nb_streams; ++i) {
-        LOG_ERROR(TAG, LogSpec(), "InitFFMpegDecoder %d", i);
-        LOG_ERROR(TAG, LogSpec(), "m_format_ctx %d", m_format_ctx == NULL);
-        LOG_ERROR(TAG, LogSpec(), "streams %d", m_format_ctx->streams[i] == NULL);
-        LOG_ERROR(TAG, LogSpec(), "codecpar %d", m_format_ctx->streams[i]->codecpar == NULL);
-        LOG_ERROR(TAG, LogSpec(), "codec_type %d",
-                  m_format_ctx->streams[i]->codecpar->codec_type == NULL);
         if (m_format_ctx->streams[i]->codecpar->codec_type == GetMediaType()) {
             vIdx = i;
             LOG_ERROR(TAG, LogSpec(), "InitFFMpegDecoder %d", vIdx);
