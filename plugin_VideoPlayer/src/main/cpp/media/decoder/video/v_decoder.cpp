@@ -64,8 +64,13 @@ void VideoDecoder::InitBuffer() {
 
 void VideoDecoder::InitSws() {
     // 初始化格式转换工具
+    LOG_INFO(TAG, LogSpec(), "InitSws= %d",video_pixel_format())
+    LOG_INFO(TAG, LogSpec(), "InitSws= %d",DST_FORMAT)
     m_sws_ctx = sws_getContext(width(), height(), video_pixel_format(),
                                m_dst_w, m_dst_h, DST_FORMAT,
+                               SWS_FAST_BILINEAR, NULL, NULL, NULL);
+    m_sws_ctx1 = sws_getContext(width(), height(), video_pixel_format(),
+                               m_dst_w, m_dst_h, AV_PIX_FMT_YUV420P,
                                SWS_FAST_BILINEAR, NULL, NULL, NULL);
 }
 
@@ -91,8 +96,14 @@ void VideoDecoder::Render(AVFrame *frame,JNIEnv *env,jobject obj) {
     }
     env->CallVoidMethod(obj, nativeCallback, d);
 
-    sws_scale(m_sws_ctx, frame->data, frame->linesize, 0,
-              height(), m_rgb_frame->data, m_rgb_frame->linesize);
+    if (d/2==0){
+        sws_scale(m_sws_ctx, frame->data, frame->linesize, 0,
+                  height(), m_rgb_frame->data, m_rgb_frame->linesize);
+    } else{
+        sws_scale(m_sws_ctx1, frame->data, frame->linesize, 0,
+                  height(), m_rgb_frame->data, m_rgb_frame->linesize);
+    }
+
     OneFrame *one_frame = new OneFrame(m_rgb_frame->data[0], m_rgb_frame->linesize[0], frame->pts,
                                        time_base(), NULL, false);
     m_video_render->Render(one_frame);

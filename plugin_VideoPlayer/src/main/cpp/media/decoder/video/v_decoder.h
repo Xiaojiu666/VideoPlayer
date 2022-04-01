@@ -32,6 +32,7 @@ private:
 
     //视频格式转换器
     SwsContext *m_sws_ctx = NULL;
+    SwsContext *m_sws_ctx1 = NULL;
 
     //视频渲染器
     VideoRender *m_video_render = NULL;
