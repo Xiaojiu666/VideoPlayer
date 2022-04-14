@@ -419,7 +419,7 @@ public abstract class BaseDecoder implements IDecoder {
             //4.获取解码器缓冲区
             mInputBuffers = mCodec.getInputBuffers();
             mOutputBuffers = mCodec.getOutputBuffers();
-            Log.e(TAG, "Codec init sucessful...");
+            Log.e(TAG, "Codec init sucessful... mInputBuffers " + mInputBuffers.length + "mOutputBuffers " + mOutputBuffers.length);
             for (int i = 0; i < mInputBuffers.length; i++) {
                 Log.e(TAG, "Codec init mInputBuffers" + mInputBuffers[i].toString());
             }
