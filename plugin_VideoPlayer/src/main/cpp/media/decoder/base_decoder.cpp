@@ -218,46 +218,31 @@ AVFrame *BaseDecoder::DecodeOneFrame() {
             LOG_INFO(TAG, LogSpec(), "m_packet->stream_index  = true")
             LOG_ERROR(TAG, LogSpec(), "Decode error: %d", -2);
             switch (avcodec_send_packet(m_codec_ctx, m_packet)) {
-                LOG_ERROR(TAG, LogSpec(), "Decode error: %d", -1);
                 case AVERROR_EOF: {
-                    LOG_ERROR(TAG, LogSpec(), "Decode error: %d", 1);
                     av_packet_unref(m_packet);
                     LOG_ERROR(TAG, LogSpec(), "Decode error: %s", av_err2str(AVERROR_EOF));
                     return NULL; //解码结束
                 }
                 case AVERROR(EAGAIN):
-                    LOG_ERROR(TAG, LogSpec(), "Decode error: %d", 2);
                     LOG_ERROR(TAG, LogSpec(), "Decode error: %s", av_err2str(AVERROR(EAGAIN)));
                     break;
                 case AVERROR(EINVAL):
-                    LOG_ERROR(TAG, LogSpec(), "Decode error: %d", 3);
                     LOG_ERROR(TAG, LogSpec(), "Decode error: %s", av_err2str(AVERROR(EINVAL)));
                     break;
                 case AVERROR(ENOMEM):
-                    LOG_ERROR(TAG, LogSpec(), "Decode error: %d", 4);
                     LOG_ERROR(TAG, LogSpec(), "Decode error: %s", av_err2str(AVERROR(ENOMEM)));
                     break;
                 default:
-                    LOG_ERROR(TAG, LogSpec(), "Decode error: %d", 5);
                     LOG_ERROR(TAG, LogSpec(), "Decode error: %s", av_err2str(AVERROR(ENOMEM)));
                     break;
             }
-            LOG_ERROR(TAG, LogSpec(), "Decode error: %d", 6);
             LOG_INFO(TAG, LogSpec(), "m_frame = %d", m_frame->key_frame)
-            LOG_ERROR(TAG, LogSpec(), "Decode error: %d", 7);
             LOG_INFO(TAG, LogSpec(), "m_codec_ctx = %d", m_codec_ctx->codec_type)
-            LOG_ERROR(TAG, LogSpec(), "Decode error: %d", 8);
             //TODO 这里需要考虑一个packet有可能包含多个frame的情况
             //将成功的解码队列中取出1个frame
             int result = avcodec_receive_frame(m_codec_ctx, m_frame);
             LOG_INFO(TAG, LogSpec(), "result = %d", result)
             LOG_INFO(TAG, LogSpec(), "m_frame.pts = %d", m_frame->pts)
-
-            if (LogSpec() == "VIDEOXXXX") {
-                int64_t currentMills = m_frame->pts / 1000;
-                LOG_INFO(TAG, LogSpec(), "currentMills = %d", currentMills)
-            }
-
             if (result == 0) {
                 ObtainTimeStamp();
                 LOG_INFO(TAG, LogSpec(), "successful stream_index = %d", m_packet->stream_index)

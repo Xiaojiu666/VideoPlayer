@@ -13,6 +13,7 @@ import com.sn.videoplayer.ffmpeg.demo.DemoNativeInterface
 import com.sn.videoplayer.ffmpeg.demo.FFmpegPlayer
 import com.sn.videoplayer.ffmpeg.demo.PlayProgress
 import com.sn.videoplayer.media_codec.Frame
+import com.sn.videoplayer.media_codec.MediaCodecPlayer
 import com.sn.videoplayer.media_codec.decoder.AudioDecoder
 import com.sn.videoplayer.media_codec.decoder.BaseDecoder
 import com.sn.videoplayer.media_codec.decoder.IDecoderStateListener
@@ -35,7 +36,6 @@ class VideoActivity : AppCompatActivity() {
                 }
             })
         }).start()
-
 
         sfv!!.holder!!.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(

@@ -8,7 +8,7 @@
 #include "../../one_frame.h"
 
 VideoDecoder::VideoDecoder(JNIEnv *env, jobject obj, jstring path, bool for_synthesizer)
-        : BaseDecoder(env,obj, path, for_synthesizer) {
+        : BaseDecoder(env, obj, path, for_synthesizer) {
 //    jobject gJavaObj = env->NewGlobalRef(obj);
 //    jclass thiz = env->GetObjectClass(gJavaObj);
 //    jmethodID nativeCallback = env->GetMethodID(thiz,"nativeCallback","(I)V");
@@ -54,6 +54,7 @@ void VideoDecoder::InitRender(JNIEnv *env) {
 void VideoDecoder::InitBuffer() {
     m_rgb_frame = av_frame_alloc();
     // 获取缓存大小
+    // 函数的作用是通过指定像素格式、图像宽、图像高来计算所需的内存大小
     int numBytes = av_image_get_buffer_size(DST_FORMAT, m_dst_w, m_dst_h, 1);
     // 分配内存
     m_buf_for_rgb_frame = (uint8_t *) av_malloc(numBytes * sizeof(uint8_t));
@@ -64,27 +65,28 @@ void VideoDecoder::InitBuffer() {
 
 void VideoDecoder::InitSws() {
     // 初始化格式转换工具
-    LOG_INFO(TAG, LogSpec(), "InitSws= %d",video_pixel_format())
-    LOG_INFO(TAG, LogSpec(), "InitSws= %d",DST_FORMAT)
+    LOG_INFO(TAG, LogSpec(), "InitSws= %d", video_pixel_format())
+    LOG_INFO(TAG, LogSpec(), "InitSws= %d", DST_FORMAT)
+    //https://blog.csdn.net/u011686167/article/details/121875305
     m_sws_ctx = sws_getContext(width(), height(), video_pixel_format(),
                                m_dst_w, m_dst_h, DST_FORMAT,
                                SWS_FAST_BILINEAR, NULL, NULL, NULL);
     m_sws_ctx1 = sws_getContext(width(), height(), video_pixel_format(),
-                               m_dst_w, m_dst_h, AV_PIX_FMT_YUV420P,
-                               SWS_FAST_BILINEAR, NULL, NULL, NULL);
+                                m_dst_w, m_dst_h, AV_PIX_FMT_YUV420P,
+                                SWS_FAST_BILINEAR, NULL, NULL, NULL);
 }
 
-void VideoDecoder::Render(AVFrame *frame,JNIEnv *env,jobject obj) {
+void VideoDecoder::Render(AVFrame *frame, JNIEnv *env, jobject obj) {
     LOG_INFO(TAG, LogSpec(), "Render= %d", frame->key_frame)
     double d = frame->best_effort_timestamp * av_q2d(time_base());
     LOG_INFO(TAG, LogSpec(), "Render best_effort_timestamp = %f",
              d)
 
-    if (env==nullptr){
+    if (env == nullptr) {
         LOG_ERROR(TAG, LogSpec(), "m_env is NULL")
         return;
     }
-    if (obj==nullptr){
+    if (obj == nullptr) {
         LOG_ERROR(TAG, LogSpec(), "m_Obj is NULL")
         return;
     }
@@ -96,13 +98,8 @@ void VideoDecoder::Render(AVFrame *frame,JNIEnv *env,jobject obj) {
     }
     env->CallVoidMethod(obj, nativeCallback, d);
 
-    if (d/2==0){
-        sws_scale(m_sws_ctx, frame->data, frame->linesize, 0,
-                  height(), m_rgb_frame->data, m_rgb_frame->linesize);
-    } else{
-        sws_scale(m_sws_ctx1, frame->data, frame->linesize, 0,
-                  height(), m_rgb_frame->data, m_rgb_frame->linesize);
-    }
+    sws_scale(m_sws_ctx, frame->data, frame->linesize, 0,
+              height(), m_rgb_frame->data, m_rgb_frame->linesize);
 
     OneFrame *one_frame = new OneFrame(m_rgb_frame->data[0], m_rgb_frame->linesize[0], frame->pts,
                                        time_base(), NULL, false);

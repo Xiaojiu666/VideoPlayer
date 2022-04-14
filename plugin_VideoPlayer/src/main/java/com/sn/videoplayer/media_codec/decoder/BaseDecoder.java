@@ -329,7 +329,7 @@ public abstract class BaseDecoder implements IDecoder {
                 //提醒解码器或编码器处理数据（分区ID，偏移量，取多少数据，）
                 //PTS此缓冲区的表示时间戳，以微秒为单位。这通常是该缓冲区应该呈现(渲染)的媒体时间。
                 // 当使用输出表面时，它将作为{@link SurfaceTexture#getTimestamp timestamp}传播到帧(转换为纳秒后)。
-                Log.i(TAG,"PTS mExtractor " +mExtractor.getCurrentTimestamp());
+                Log.i(TAG, "PTS mExtractor " + mExtractor.getCurrentTimestamp());
                 mCodec.queueInputBuffer(inputBufferIndex, 0,
                         sampleSize, mExtractor.getCurrentTimestamp(), 0);
                 //Log.e(TAG, "pushBufferToDecoder getCurrentTimestamp " + mExtractor.getCurrentTimestamp());
@@ -357,30 +357,49 @@ public abstract class BaseDecoder implements IDecoder {
     private String mFilePath;
 
     private boolean init() {
+        Log.d(TAG, TAG + "init start");
         //1.检查参数是否完整
         if (mFilePath.isEmpty() || !new File(mFilePath).exists()) {
-            Log.w(TAG, "文件路径为空");
+            Log.d(TAG, "文件路径为空");
             mStateListener.decoderError(this, "文件路径为空");
             return false;
         }
         //调用虚函数，检查子类参数是否完整
-        if (!check()) return false;
-
+        if (!check()) {
+            Log.d(TAG, "check false");
+            return false;
+        }
         //2.初始化数据提取器
+        Log.d(TAG, "mExtractor true");
         mExtractor = initExtractor(mFilePath);
-        if (mExtractor == null ||
-                mExtractor.getFormat() == null) return false;
+        Log.d(TAG, "mExtractor " + mExtractor);
+        if (mExtractor == null || mExtractor.getFormat() == null) {
+            Log.d(TAG, "mExtractor false");
+            return false;
+        }
 
         //3.初始化参数
-        if (!initParams()) return false;
+        Log.d(TAG, "initParams true");
+        if (!initParams()) {
+            Log.d(TAG, "initParams false");
+            return false;
+        }
 
         //4.初始化渲染器
-        if (!initRender()) return false;
+        Log.d(TAG, "initRender true");
+        if (!initRender()) {
+            Log.d(TAG, "initRender false");
+            return false;
+        }
 
         //5.初始化解码器
-        if (!initCodec()) return false;
+        Log.d(TAG, "initCodec true");
+        if (!initCodec()) {
+            Log.d(TAG, "initCodec false");
+            return false;
+        }
 
-        Log.e(TAG, "decoder init sucessful...");
+        Log.e(TAG, TAG + " init sucessful...");
         return true;
     }
 
@@ -392,7 +411,7 @@ public abstract class BaseDecoder implements IDecoder {
             Log.e(TAG, "initCodec " + type);
             mCodec = MediaCodec.createDecoderByType(type);
             //2.配置解码器
-            if (!   configCodec(mCodec, mExtractor.getFormat())) {
+            if (!configCodec(mCodec, mExtractor.getFormat())) {
                 waitDecode();
             }
             //3.启动解码器
@@ -401,11 +420,11 @@ public abstract class BaseDecoder implements IDecoder {
             mInputBuffers = mCodec.getInputBuffers();
             mOutputBuffers = mCodec.getOutputBuffers();
             Log.e(TAG, "Codec init sucessful...");
-            for (int i = 0; i < mInputBuffers.length; i++){
+            for (int i = 0; i < mInputBuffers.length; i++) {
                 Log.e(TAG, "Codec init mInputBuffers" + mInputBuffers[i].toString());
             }
 
-            for (int i = 0; i < mOutputBuffers.length; i++){
+            for (int i = 0; i < mOutputBuffers.length; i++) {
                 Log.e(TAG, "Codec init mOutputBuffers" + mOutputBuffers[i].toString());
             }
 

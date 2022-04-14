@@ -23,10 +23,9 @@ import java.util.logging.Logger
 
 class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
     var TAG = "MainActivity"
-    var titles = arrayOf("音视频编解码")
-    var descs = arrayOf("音视频编解码(包含软编码FFmpeg /硬编码MediaCodeC)")
+    var titles = arrayOf("音视频编解码-软解码", "音视频编解码-硬解码")
+    var descs = arrayOf("FFmpeg", "MediaCodec")
     var data = ArrayList<GuideTitle>()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,10 +69,23 @@ class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
     override fun onClick(view: View, position: Int) {
         when (position) {
             0 -> {
-                val intent = Intent(MainActivity@ this, VideoActivity::class.java)
-                startActivity(intent)
+                toSoftActivity()
+            }
+            1 -> {
+                toHardActivity()
             }
         }
+    }
+
+
+    private fun toSoftActivity() {
+        val intent = Intent(this, VideoActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun toHardActivity() {
+        val intent = Intent(this, VideoHardActivity::class.java)
+        startActivity(intent)
     }
 
 }

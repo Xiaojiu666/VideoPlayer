@@ -18,21 +18,19 @@ class VideoExtractor(filePath: String) : BaseExtractor(filePath) {
 
     override fun getMediaFormat(): MediaFormat? {
         //【2.1，获取视频多媒体格式】
-        Log.e(
-            TAG,
-            " getVideoFormat  getTrackCount " + mExtractor!!.trackCount
-        )
+        Log.e(TAG, " getVideoFormat  getTrackCount " + mExtractor!!.trackCount)
         for (i in 0 until mExtractor!!.trackCount) {
             val mediaFormat = mExtractor!!.getTrackFormat(i)
             mExtractor!!.cachedDuration
             val mime = mediaFormat.getString(MediaFormat.KEY_MIME)
+            Log.e(TAG, " getVideoFormat  getTrackCount $mime")
             if (mime!!.startsWith("video/")) {
                 mVideoTrack = i
                 break
             }
         }
         duration = mExtractor!!.getTrackFormat(mVideoTrack)!!.getLong(MediaFormat.KEY_DURATION)
-        getFrameTime()
+      //  getFrameTime()
         return if (mVideoTrack >= 0) {
             mExtractor!!.getTrackFormat(mVideoTrack)
         } else {

@@ -9,14 +9,14 @@ import java.nio.ByteBuffer
  *  音视频信息提取器，主要用于分离音视频数据获取音/视频 数据
  *  对MediaExtractor 二次包装
  */
-abstract class BaseExtractor(private val filePath : String) :
+abstract class BaseExtractor(private val filePath: String) :
     IExtractor {
     /**
      * 音视频分离器
      */
-    var mExtractor: MediaExtractor? =null
+    var mExtractor: MediaExtractor? = null
 
-    val TAG = "BaseExtractor"
+    val TAG = javaClass.name
 
     /**
      * 当前帧时间戳
@@ -89,9 +89,6 @@ abstract class BaseExtractor(private val filePath : String) :
         mExtractor!!.release()
         mExtractor = null
     }
-
-
-
 
 
     abstract fun getTrackType(): Int

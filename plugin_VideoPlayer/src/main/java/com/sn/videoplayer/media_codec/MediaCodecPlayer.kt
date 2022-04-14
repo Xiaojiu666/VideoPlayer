@@ -9,11 +9,12 @@ import com.sn.videoplayer.media_codec.decoder.IDecoderStateListener
 import com.sn.videoplayer.media_codec.decoder.VideoDecoder
 import java.util.concurrent.Executors
 
-class MediaCodecPlayer(var filePath:String,var sfv :SurfaceView ) : PlayerControl(),
+class MediaCodecPlayer(var sfv: SurfaceView, var filePath: String) : PlayerControl(),
     IDecoderStateListener {
 
-    var videoDecoder :VideoDecoder? =null
-    var audioDecoder :AudioDecoder? =null
+    var videoDecoder: VideoDecoder? = null
+    var audioDecoder: AudioDecoder? = null
+
     init {
         //创建线程池
         val threadPool =
@@ -38,6 +39,7 @@ class MediaCodecPlayer(var filePath:String,var sfv :SurfaceView ) : PlayerContro
         videoDecoder!!.goOn()
         audioDecoder!!.goOn()
     }
+
     override fun stop(playId: Int) {
 
         videoDecoder!!.stop()
@@ -48,6 +50,7 @@ class MediaCodecPlayer(var filePath:String,var sfv :SurfaceView ) : PlayerContro
         videoDecoder!!.release()
         audioDecoder!!.release()
     }
+
     override fun decoderReady(decodeJob: BaseDecoder?) {
     }
 

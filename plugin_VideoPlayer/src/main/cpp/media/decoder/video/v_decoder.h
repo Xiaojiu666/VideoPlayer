@@ -37,7 +37,7 @@ private:
     //视频渲染器
     VideoRender *m_video_render = NULL;
 
-    //显示的目标宽
+    //显示的目标宽，根据SurfaceView窗口 和视频宽高设置比例计算出来的值
     int m_dst_w;
     //显示的目标高
     int m_dst_h;
