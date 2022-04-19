@@ -1,3 +1,4 @@
 include ':plugin_VideoPlayer'
 include ':app'
 rootProject.name = "VideoPlayer"
+include ':plugin_datasource'
