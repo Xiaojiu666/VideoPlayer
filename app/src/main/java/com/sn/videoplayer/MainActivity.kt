@@ -26,7 +26,23 @@ class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
     var titles = arrayOf("音视频编解码-软解码", "音视频编解码-硬解码")
     var descs = arrayOf("FFmpeg", "MediaCodec")
     var data = ArrayList<GuideTitle>()
-
+    var title = "[{ \n" +
+            "  \"tile\":\"\",\n" +
+            "  \"tile_desc\":\"测试\",\n" +
+            "  \"sub_title\":[{ \n" +
+            "  \"tile\":\"\",\n" +
+            "  \"tile_desc\":\"测试\",\n" +
+            "  \"sub_title\":[\"a\",\"b\"]\n" +
+            "},{ \n" +
+            "  \"tile\":\"\",\n" +
+            "  \"tile_desc\":\"测试\"\n" +
+            "}\n" +
+            "]\n" +
+            "},{ \n" +
+            "  \"tile\":\"\",\n" +
+            "  \"tile_desc\":\"测试\"\n" +
+            "}\n" +
+            "]"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -76,8 +92,7 @@ class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
             }
         }
     }
-
-
+    
     private fun toSoftActivity() {
         val intent = Intent(this, VideoActivity::class.java)
         startActivity(intent)

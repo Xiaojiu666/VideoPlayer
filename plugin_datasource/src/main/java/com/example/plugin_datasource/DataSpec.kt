@@ -7,10 +7,9 @@ import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 
 /**
- *定义资源中的数据区域。
+ * 定义资源中的数据区域。
  */
 class DataSpec(uri: Uri, position: Long, length: Long) {
-
 
     @Documented
     @Retention(RetentionPolicy.SOURCE)
