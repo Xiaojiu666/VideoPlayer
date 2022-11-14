@@ -7,8 +7,12 @@
 
 #endif //VIDEOPLAYER_VIDEO_INFO_H
 
+extern "C" {
+#include <libavutil/imgutils.h>
+#include <libswscale/swscale.h>
+};
 class VideoInfo{
 private:
-    VideoInfo()
+    VideoInfo(jstring filePath)
 
 };

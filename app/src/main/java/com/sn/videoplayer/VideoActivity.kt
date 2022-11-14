@@ -27,54 +27,57 @@ class VideoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_video)
         val fFmpegPlayer = FFmpegPlayer()
         val fFmpegInfo = fFmpegPlayer.getFFmpegInfo()
+        val videoInfo = DemoNativeInterface.videoInfo(Config.FILE_PATH)
         var initVideoPlayer = 0
-        textView.text = fFmpegInfo
-        Thread(Runnable {
-            DemoNativeInterface.setProgress(PlayProgress {
-                runOnUiThread {
-                    seekBar.setCurrentTime(it.toInt())
-                }
-            })
-        }).start()
-
-        sfv!!.holder!!.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(
-                holder: SurfaceHolder,
-                format: Int,
-                width: Int,
-                height: Int
-            ) {
-            }
-
-            override fun surfaceDestroyed(holder: SurfaceHolder) {
-            }
-
-            override fun surfaceCreated(holder: SurfaceHolder) {
-                initVideoPlayer = fFmpegPlayer.initVideoPlayer(holder.surface, Config.FILE_PATH)
-                Log.e(TAG, "initVideoPlayer : $initVideoPlayer")
-                Thread(Runnable {
-                    runOnUiThread {
-//                        var videoTime = fFmpegPlayer.getVideoTime(initVideoPlayer)
-                        var videoTime = fFmpegPlayer.getVideoTotalTime(initVideoPlayer)
-                        Log.e(TAG, "videoTime : $videoTime")
-                        seekBar.setTotalTime(videoTime)
-                    }
-                }).start()
-            }
-        })
+        textView.text = videoInfo
 
 
-
-        video_start.setOnClickListener {
-            fFmpegPlayer.start(initVideoPlayer)
-        }
-
-        video_stop.setOnClickListener {
-            fFmpegPlayer.stop(initVideoPlayer)
-        }
-        video_seek_after.setOnClickListener {
-            DemoNativeInterface.threadStart()
-        }
+//        Thread(Runnable {
+//            DemoNativeInterface.setProgress(PlayProgress {
+//                runOnUiThread {
+//                    seekBar.setCurrentTime(it.toInt())
+//                }
+//            })
+//        }).start()
+//
+//        sfv!!.holder!!.addCallback(object : SurfaceHolder.Callback {
+//            override fun surfaceChanged(
+//                holder: SurfaceHolder,
+//                format: Int,
+//                width: Int,
+//                height: Int
+//            ) {
+//            }
+//
+//            override fun surfaceDestroyed(holder: SurfaceHolder) {
+//            }
+//
+//            override fun surfaceCreated(holder: SurfaceHolder) {
+//                initVideoPlayer = fFmpegPlayer.initVideoPlayer(holder.surface, Config.FILE_PATH)
+//                Log.e(TAG, "initVideoPlayer : $initVideoPlayer")
+//                Thread(Runnable {
+//                    runOnUiThread {
+////                        var videoTime = fFmpegPlayer.getVideoTime(initVideoPlayer)
+//                        var videoTime = fFmpegPlayer.getVideoTotalTime(initVideoPlayer)
+//                        Log.e(TAG, "videoTime : $videoTime")
+//                        seekBar.setTotalTime(videoTime)
+//                    }
+//                }).start()
+//            }
+//        })
+//
+//
+//
+//        video_start.setOnClickListener {
+//            fFmpegPlayer.start(initVideoPlayer)
+//        }
+//
+//        video_stop.setOnClickListener {
+//            fFmpegPlayer.stop(initVideoPlayer)
+//        }
+//        video_seek_after.setOnClickListener {
+//            DemoNativeInterface.threadStart()
+//        }
     }
 
     companion object {

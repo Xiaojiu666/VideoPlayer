@@ -3,6 +3,7 @@
 //
 
 #include "video_info.h"
-VideoInfo::VideoInfo() {
+VideoInfo::VideoInfo(jstring filePath) {
+
 
 }

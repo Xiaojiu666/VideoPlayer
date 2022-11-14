@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ASMIdeaPluginConfiguration">
-    <asm skipDebug="false" skipFrames="false" skipCode="false" expandFrames="false" />
-    <groovy codeStyle="LEGACY" />
-  </component>
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Study/androidCode/VideoPlayer/app/src/main/res/layout/activity_video.xml" value="0.29635416666666664" />
         <entry key="app/src/main/res/layout/video_seek_bar.xml" value="0.14791666666666667" />
         <entry key="plugin_datasource/src/main/res/layout/activity_main.xml" value="0.2838541666666667" />
       </map>

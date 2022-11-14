@@ -21,7 +21,7 @@ object DemoNativeInterface {
 
     external fun threadStop();
 
-    external fun videoInfo();
+    external fun videoInfo(path: String): String
 
     fun nativeCallback(double: Double) {
         Log.d("DemoNativeInterface", "nativeCallback $double");

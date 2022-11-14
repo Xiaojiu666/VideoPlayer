@@ -30,7 +30,7 @@ class VideoExtractor(filePath: String) : BaseExtractor(filePath) {
             }
         }
         duration = mExtractor!!.getTrackFormat(mVideoTrack)!!.getLong(MediaFormat.KEY_DURATION)
-      //  getFrameTime()
+//        getFrameTime()
         return if (mVideoTrack >= 0) {
             mExtractor!!.getTrackFormat(mVideoTrack)
         } else {
