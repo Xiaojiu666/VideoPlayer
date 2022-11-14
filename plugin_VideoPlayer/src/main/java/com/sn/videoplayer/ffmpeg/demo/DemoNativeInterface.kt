@@ -21,6 +21,8 @@ object DemoNativeInterface {
 
     external fun threadStop();
 
+    external fun videoInfo();
+
     fun nativeCallback(double: Double) {
         Log.d("DemoNativeInterface", "nativeCallback $double");
         mPlayProgress.progress(double)
