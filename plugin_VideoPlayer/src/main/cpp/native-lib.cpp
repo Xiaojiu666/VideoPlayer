@@ -11,6 +11,7 @@
 
 const char *TAG = "AVCodec info";
 
+
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
@@ -104,44 +105,51 @@ Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_videoTotalTime(JNIEnv *e
     return (jint) p->videoTimeTotal();
 }
 
+jstring StringToJString(JNIEnv *env, const std::string &nativeString) {
+    return env->NewStringUTF(nativeString.c_str());
+}
+
+
 JNIEXPORT jstring JNICALL
 Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_videoInfo(JNIEnv *env, jobject thiz,
                                                                   jstring path) {
     AVFormatContext *ac = NULL;
-//    char videoInfo[40000] = {0};
-    std::string videoInfo="";
-
-
-//    char *videoInfo;
-    int ret = 0;
+    std::string videoInfo = "";
     const char *filepaht = env->GetStringUTFChars(path, NULL);
-    ret = avformat_open_input(&ac, filepaht, NULL, NULL);
-//    https://www.php.cn/csharp-article-414735.html
-//    fprintf(stderr, "duration = %.2fs\n", (double)ac->duration / 1000000);
-//    fprintf(stderr, "bitrate = %.2fkb/s\n", (double)ac->bit_rate / 1000);
-//    sprintf(videoInfo, "open %s(video) error:", videoInfo);
+    int ret = avformat_open_input(&ac, filepaht, NULL, NULL);
+    //https://www.php.cn/csharp-article-414735.html
     if (ret < 0) {
-        videoInfo.append("open(fail)");
-//        sprintf(videoInfo, "open(fail) : %s",videoInfo);
-//        av_log(NULL, AV_LOG_ERROR, "open %s error. \n\n", fileName);
+        videoInfo.append("open video error \n");
     } else {
-        videoInfo.append("open(success)");
-//        sprintf(videoInfo, "open (success) : %s",videoInfo);
-//        av_log(NULL, AV_LOG_INFO, "open %s success. \n\n", (double)ac->duration / 1000000);
+        videoInfo.append("open video success  \n");
     }
+    int videoindex = -1;
+    for (int i = 0; i < ac->nb_streams; i++) {
+        if (ac->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
+            videoindex = i;
+            break;
+        }
+    }
+    videoInfo += "streams size  = " + std::to_string(videoindex) + " \n";
+
+    if (videoindex == -1) {
+        printf("Didn't find a video stream.\n");
+    }
+
+
+    AVStream * pVStream = ac->streams[videoindex];
+
     //https://blog.csdn.net/qq_41824928/article/details/103631719
-    videoInfo.append( "duration = %.2fs\n", (double)ac->duration / 1000000);
-    videoInfo.append(  "bitrate = %.2fkb/s\n", (double)ac->bit_rate  / 1000);
-
-//    sprintf(videoInfo, "duration = %.2fs\n", (double)ac->duration / 1000000);
-//    sprintf(videoInfo, "bitrate = %.2fkb/s\n", (double)ac->bit_rate  / 1000);
-//    LOGE(TAG, "decode after %s", videoInfo)
+    videoInfo += "duration = " + std::to_string(ac->duration / 1000000) + "s\n";
+    videoInfo += "bitrate = " + std::to_string(ac->bit_rate / 1000) + "kb/s\n";
+    videoInfo += "totalFrames = " + std::to_string(pVStream-> nb_frames) + " 帧\n";
+    videoInfo += "width  = " + std::to_string( pVStream->codecpar->width) +  "，height  = " + std::to_string( pVStream->codecpar->height) +"  \n";
+    LOGE(TAG, "videoInfo %s", videoInfo.c_str())
     av_dump_format(ac, 0, filepaht, 0);
-//    avformat_close_input(&ac);
-    //close file flow
     avformat_close_input(&ac);
-    return env->New(videoInfo);
+    return env->NewStringUTF(videoInfo.c_str());
 }
 
 
 }
+
