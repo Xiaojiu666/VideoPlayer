@@ -26,6 +26,7 @@ class CopyFileWork(context: Context, workerParams: WorkerParameters) :
             if (filePath != null) {
                 val file = File(filePath)
                 Log.e(TAG, "filePath "+ file.exists())
+                Log.e(TAG, "filePath "+ file.path)
                 if (file.exists()) {
                     val outPut = Data.Builder().putString("out_put", "File exists").build()
                     Result.failure(outPut)

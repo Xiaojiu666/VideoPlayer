@@ -19,6 +19,16 @@ set(ffmpeg_head_dir ${CMAKE_SOURCE_DIR}/ffmpeg)
 # 2. 添加头文件目录
 include_directories(${ffmpeg_head_dir}/include)
 
+
+
+add_library( image
+        SHARED
+        IMPORTED )
+set_target_properties( image
+        PROPERTIES IMPORTED_LOCATION
+        ${ffmpeg_lib_dir}/libpng.so )
+
+
 # 3. 添加ffmpeg相关的so库
 add_library( avutil
         SHARED
@@ -147,4 +157,6 @@ target_link_libraries(
         # Links the target library to the log library
         # included in the NDK.
         ${OpenSLES-lib}
-        ${log-lib} )
+        ${log-lib}
+        image
+)
