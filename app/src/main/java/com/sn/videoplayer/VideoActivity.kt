@@ -25,11 +25,13 @@ class VideoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
-        val fFmpegPlayer = FFmpegPlayer()
-        val fFmpegInfo = fFmpegPlayer.getFFmpegInfo()
-        val videoInfo = DemoNativeInterface.videoInfo(Config.FILE_PATH)
+//        val fFmpegPlayer = FFmpegPlayer()
+//        val fFmpegInfo = fFmpegPlayer.getFFmpegInfo()
+
+        val videoInfo = DemoNativeInterface.initMedia(Config.FILE_NAME_LAKE)
+        val mediaInfo = DemoNativeInterface.getMediaInfo(videoInfo)
         var initVideoPlayer = 0
-        textView.text = videoInfo
+        textView.text = mediaInfo
 
 
 //        Thread(Runnable {

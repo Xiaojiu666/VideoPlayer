@@ -131,6 +131,11 @@ add_library( # Sets the name of the library.
         ${CMAKE_SOURCE_DIR}/media/render/audio/audio_render.h
         ${CMAKE_SOURCE_DIR}/media/render/audio/opensl_render.cpp
 
+        ${CMAKE_SOURCE_DIR}/media/info/media.h
+        ${CMAKE_SOURCE_DIR}/media/info/media.cpp
+
+
+
 
         )
 

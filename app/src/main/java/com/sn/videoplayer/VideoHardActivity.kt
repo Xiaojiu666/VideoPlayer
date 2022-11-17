@@ -15,7 +15,7 @@ class VideoHardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
-        mediaCodecPlayer = MediaCodecPlayer(sfv, Config.FILE_PATH)
+        mediaCodecPlayer = MediaCodecPlayer(sfv, Config.FOLDER_PATH_VIDEO)
         initView()
     }
 

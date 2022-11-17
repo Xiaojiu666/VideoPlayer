@@ -23,6 +23,11 @@ object DemoNativeInterface {
 
     external fun videoInfo(path: String): String
 
+    external fun initMedia(path: String): Int
+
+    external fun getMediaInfo(media: Int):String
+
+
     fun nativeCallback(double: Double) {
         Log.d("DemoNativeInterface", "nativeCallback $double");
         mPlayProgress.progress(double)

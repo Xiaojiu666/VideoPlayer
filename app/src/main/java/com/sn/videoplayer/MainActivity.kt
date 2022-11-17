@@ -18,6 +18,7 @@ import com.sn.videoplayer.view.GuideAdapter
 import com.sn.videoplayer.worker.CopyFileWork
 import com.sn.videoplayer.worker.CopyFileWork.Companion.KEY_FILEPATH
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
 import java.util.*
 import java.util.logging.Logger
 
@@ -68,8 +69,10 @@ class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
             )
         )
         guideAdapter.onClickListener = this
+
+
         val request = OneTimeWorkRequestBuilder<CopyFileWork>()
-            .setInputData(workDataOf(KEY_FILEPATH to Config.FILE_PATH))
+            .setInputData(workDataOf(KEY_FILEPATH to Config.FILE_NAME_LAKE))
             .build()
         WorkManager.getInstance(baseContext).enqueue(request)
         WorkManager.getInstance(baseContext).getWorkInfoByIdLiveData(request.id)
