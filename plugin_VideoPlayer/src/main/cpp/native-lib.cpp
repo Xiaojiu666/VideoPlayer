@@ -84,13 +84,19 @@ JNIEXPORT jstring JNICALL
 Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_getMediaInfo(JNIEnv *env,
                                                                      jobject obj/* this */,
                                                                      jint media) {
-//    LOGE("Media C++ ", "videoIndex %s", "initMedia")
-//    const char *filePath = env->GetStringUTFChars(path, NULL);
-//    LOGE("Media C++ ", "videoIndex %s", filePath)
-//    Media *media = new Media(filePath);
-    Media *m = (Media *) media;
+    auto *m = (Media *) media;
     char *string = m->getMediaInfo();
     return (jstring) env->NewStringUTF(string);
+}
+
+JNIEXPORT void JNICALL
+Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_generatePng(JNIEnv *env,
+                                                                     jobject obj/* this */,
+                                                                    jint media,
+                                                                    jstring path) {
+    auto *m = (Media *) media;
+    const char *filePath = env->GetStringUTFChars(path, NULL);
+    m->generatePng(filePath);
 }
 
 

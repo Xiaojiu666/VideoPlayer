@@ -27,6 +27,8 @@ object DemoNativeInterface {
 
     external fun getMediaInfo(media: Int):String
 
+    external fun generatePng(media: Int,path: String)
+
 
     fun nativeCallback(double: Double) {
         Log.d("DemoNativeInterface", "nativeCallback $double");

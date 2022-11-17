@@ -19,6 +19,7 @@ import com.sn.videoplayer.media_codec.decoder.BaseDecoder
 import com.sn.videoplayer.media_codec.decoder.IDecoderStateListener
 import com.sn.videoplayer.media_codec.decoder.VideoDecoder
 import kotlinx.android.synthetic.main.activity_video.*
+import kotlinx.coroutines.*
 import java.util.concurrent.Executors
 
 class VideoActivity : AppCompatActivity() {
@@ -30,9 +31,11 @@ class VideoActivity : AppCompatActivity() {
 
         val videoInfo = DemoNativeInterface.initMedia(Config.FILE_NAME_LAKE)
         val mediaInfo = DemoNativeInterface.getMediaInfo(videoInfo)
-        var initVideoPlayer = 0
         textView.text = mediaInfo
-
+        // CoroutineScope（英文翻译：携程范围，即我们的携程体）
+        GlobalScope.launch {
+            DemoNativeInterface.generatePng(videoInfo,Config.FOLDER_PATH_IMAGE);
+        }
 
 //        Thread(Runnable {
 //            DemoNativeInterface.setProgress(PlayProgress {
