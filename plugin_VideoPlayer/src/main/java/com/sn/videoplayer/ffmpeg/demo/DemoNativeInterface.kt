@@ -25,20 +25,41 @@ object DemoNativeInterface {
 
     external fun initMedia(path: String): Int
 
-    external fun getMediaInfo(media: Int):String
+    external fun getMediaInfo(media: Int): String
 
-    external fun generatePng(media: Int,path: String)
+    external fun generatePng(media: Int, path: String)
 
+    fun generatePngCallback(string: String) {
+        Log.d("DemoNativeInterface", "generatePngCallback $string");
+        if (mediaInfoCallBack != null){
+            mediaInfoCallBack!!.generatePngCallBack(string)
+        }
+    }
 
     fun nativeCallback(double: Double) {
         Log.d("DemoNativeInterface", "nativeCallback $double");
         mPlayProgress.progress(double)
     }
 
+    fun generatePngCallback(double: Int) {
+        Log.d("DemoNativeInterface", "nativeCallback $double");
+    }
+
+    fun generatePngCallback(double: Double) {
+        Log.d("DemoNativeInterface", "nativeCallback $double");
+    }
+
     lateinit var mPlayProgress: PlayProgress;
 
     fun setProgress(playProgress: PlayProgress) {
         mPlayProgress = playProgress
+    }
+
+    var mediaInfoCallBack: MediaInfoCallBack? = null;
+
+    @JvmName("setMediaInfoCallBack1")
+    fun setMediaInfoCallBack(mediaInfoCallBack: MediaInfoCallBack){
+        this.mediaInfoCallBack = mediaInfoCallBack
     }
 
     init {

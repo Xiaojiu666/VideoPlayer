@@ -16,6 +16,7 @@ extern "C" {
 #include <libpng/png.h>
 #include <libavutil/imgutils.h>
 #include <libswscale/swscale.h>
+#include "../../utils/callback.h"
 };
 
 class Media {
@@ -29,7 +30,7 @@ public:
 
     void openCodec();
 
-    void generatePng(const char *filePath);
+    void generatePng(const char *filePath,Callback *generatePngCallback);
 
 
 private:

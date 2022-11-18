@@ -91,12 +91,13 @@ Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_getMediaInfo(JNIEnv *env
 
 JNIEXPORT void JNICALL
 Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_generatePng(JNIEnv *env,
-                                                                     jobject obj/* this */,
+                                                                    jobject obj/* this */,
                                                                     jint media,
                                                                     jstring path) {
     auto *m = (Media *) media;
+    Callback *pCallback = new Callback(env, obj);
     const char *filePath = env->GetStringUTFChars(path, NULL);
-    m->generatePng(filePath);
+    m->generatePng(filePath, pCallback);
 }
 
 

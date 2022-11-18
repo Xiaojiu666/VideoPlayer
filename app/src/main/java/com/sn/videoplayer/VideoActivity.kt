@@ -1,5 +1,6 @@
 package com.sn.videoplayer
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.sn.videoplayer.data.Config
 import com.sn.videoplayer.ffmpeg.demo.DemoNativeInterface
 import com.sn.videoplayer.ffmpeg.demo.FFmpegPlayer
+import com.sn.videoplayer.ffmpeg.demo.MediaInfoCallBack
 import com.sn.videoplayer.ffmpeg.demo.PlayProgress
 import com.sn.videoplayer.media_codec.Frame
 import com.sn.videoplayer.media_codec.MediaCodecPlayer
@@ -31,10 +33,16 @@ class VideoActivity : AppCompatActivity() {
 
         val videoInfo = DemoNativeInterface.initMedia(Config.FILE_NAME_LAKE)
         val mediaInfo = DemoNativeInterface.getMediaInfo(videoInfo)
-        textView.text = mediaInfo
+        DemoNativeInterface.setMediaInfoCallBack(object : MediaInfoCallBack {
+            @SuppressLint("SetTextI18n")
+            override fun generatePngCallBack(imagePath: String) {
+                textView.text = mediaInfo + imagePath
+
+            }
+        })
         // CoroutineScope（英文翻译：携程范围，即我们的携程体）
         GlobalScope.launch {
-            DemoNativeInterface.generatePng(videoInfo,Config.FOLDER_PATH_IMAGE);
+            DemoNativeInterface.generatePng(videoInfo, Config.FOLDER_PATH_IMAGE);
         }
 
 //        Thread(Runnable {

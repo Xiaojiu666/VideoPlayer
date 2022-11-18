@@ -6,6 +6,7 @@
 #include "media.h"
 #include "../../utils/logger.h"
 
+
 static const char *TAG = "Media C++";
 
 Media::Media(const char *filePath) {
@@ -36,7 +37,7 @@ Media::Media(const char *filePath) {
 }
 
 
-char* Media::getMediaInfo() {
+char *Media::getMediaInfo() {
     std::string videoInfo = "";
     if (openCode < 0) {
         videoInfo.append("open video error \n");
@@ -70,7 +71,7 @@ void Media::openCodec() {
     fprintf(stderr, "codecName = %s\n", pCodec->long_name);
     // 打开视频编码器
     //https://blog.csdn.net/qq_44857505/article/details/127305880
-     pCodecCtx = avcodec_alloc_context3(
+    pCodecCtx = avcodec_alloc_context3(
             pCodec); // avcodec_alloc_context3的作用是分配一个AVCodecContext并设置默认值
     if (avcodec_parameters_to_context(pCodecCtx, pCodecParam) < 0) {
         printf("Couldn't copy codec context.\r\n");
@@ -80,8 +81,8 @@ void Media::openCodec() {
     }
 }
 
-void Media::generatePng(const char *filePath) {
-    if (pCodecCtx == nullptr){
+void Media::generatePng(const char *filePath, Callback *generatePngCallback) {
+    if (pCodecCtx == nullptr) {
         openCodec();
     }
     while (av_read_frame(ac, &packet) >= 0) {
@@ -95,7 +96,7 @@ void Media::generatePng(const char *filePath) {
                     //https://www.jianshu.com/p/cbe9abe89326
                     char filename[1024];
                     //把yuv数据保存为png图片
-                    std::string const& cc = std::string(filePath) + std::string("/frame%d.png");
+                    std::string const &cc = std::string(filePath) + std::string("/frame%d.png");
                     char const *imagePath = cc.c_str();
                     sprintf(filename,
                             imagePath,
@@ -178,6 +179,7 @@ void Media::generatePng(const char *filePath) {
                     // fwrite(pFrame->data[1], 1, pFrame->linesize[1] * pCodecCtx->height / 2, pFile);
                     // fwrite(pFrame->data[2], 1, pFrame->linesize[2] * pCodecCtx->height / 2, pFile);
                     // fclose(pFile);
+                    generatePngCallback->callbackS("generatePngCallback", imagePath);
                 }
                 i++;
                 LOGE(TAG, "frame%d\r\n", i);
@@ -194,6 +196,7 @@ void Media::generatePng(const char *filePath) {
         }
         av_packet_unref(&packet);
     }
+
 }
 
 Media::~Media() {

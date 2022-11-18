@@ -109,6 +109,8 @@ add_library( # Sets the name of the library.
         # 工具
         ${CMAKE_SOURCE_DIR}/utils/logger.h
         ${CMAKE_SOURCE_DIR}/utils/timer.c
+        ${CMAKE_SOURCE_DIR}/utils/callback.h
+        ${CMAKE_SOURCE_DIR}/utils/callback.cpp
         ${CMAKE_SOURCE_DIR}/media/const.h
 #
 #        # 解码器
@@ -133,6 +135,7 @@ add_library( # Sets the name of the library.
 
         ${CMAKE_SOURCE_DIR}/media/info/media.h
         ${CMAKE_SOURCE_DIR}/media/info/media.cpp
+
 
 
 
