@@ -11,16 +11,20 @@
 //#include "../../../opengl/drawer/proxy/def_drawer_proxy_impl.h"
 //const char *TAG = "VideoDecoder";
 Player::Player(JNIEnv *jniEnv, jobject obj, jstring path, jobject surface) {
+
+    javaCallback = new Callback(jniEnv, obj);
+    LOGE(TAG, "VideoDecoder Init")
     m_v_decoder = new VideoDecoder(jniEnv, obj, path);
     // 本地窗口播放
+    LOGE(TAG, "NativeRender Init")
     m_v_render = new NativeRender(jniEnv, surface);
     m_v_decoder->SetRender(m_v_render);
-    LOGE(TAG, "NativeRender con")
+    LOGE(TAG, "AudioDecoder Init")
     // 音频解码
     m_a_decoder = new AudioDecoder(jniEnv, obj, path, false);
+    // 渲染
     m_a_render = new OpenSLRender();
     m_a_decoder->SetRender(m_a_render);
-    obj = obj;
     LOGE(TAG, "AudioDecoder con")
 }
 
@@ -43,13 +47,14 @@ void Player::pause() {
     }
 }
 
-char* Player::viedeotime() {
+char *Player::viedeotime() {
     if (m_v_decoder != NULL) {
         char *string = m_v_decoder->VideoTime();
         return string;
     }
     return NULL;
 }
+
 int Player::videoTimeTotal() {
     if (m_v_decoder != NULL) {
         return m_v_decoder->VideoTotalTime();;

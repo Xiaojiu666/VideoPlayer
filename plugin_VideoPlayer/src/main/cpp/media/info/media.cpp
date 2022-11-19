@@ -179,10 +179,10 @@ void Media::generatePng(const char *filePath, Callback *generatePngCallback) {
                     // fwrite(pFrame->data[1], 1, pFrame->linesize[1] * pCodecCtx->height / 2, pFile);
                     // fwrite(pFrame->data[2], 1, pFrame->linesize[2] * pCodecCtx->height / 2, pFile);
                     // fclose(pFile);
-                    generatePngCallback->callbackS("generatePngCallback", imagePath);
+                    LOGE(TAG, "frame%d\r\n", filename);
+                    generatePngCallback->callbackS("generatePngCallback", filename);
                 }
                 i++;
-                LOGE(TAG, "frame%d\r\n", i);
             }
 
             // if (frameFinished == 0) //

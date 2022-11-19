@@ -3,9 +3,9 @@
 //
 
 #include "callback.h"
-#include "../media/render/audio/opensl_render.h"
+#include "logger.h"
 
-
+static const char *TAG = "Callback";
 //https://blog.csdn.net/qq_27278957/article/details/77164353
 Callback::Callback(JNIEnv *env, jobject obj) {
     jniEnv = env;
@@ -37,6 +37,7 @@ void Callback::callbackD(const char *methodName, double value) {
     jniEnv->CallVoidMethod(gJavaObj, nativeCallback, value);
 }
 
+
 void Callback::callbackS(const char *methodName, const char *value) {
     LOGE(TAG, "nativeCallback callbackS")
     if (jniEnv == NULL || jobJect == NULL) {
@@ -52,3 +53,12 @@ void Callback::callbackS(const char *methodName, const char *value) {
     jstring charst = jniEnv->NewStringUTF(value);
     jniEnv->CallVoidMethod(gJavaObj, nativeCallback, charst);
 }
+
+void Callback::callbackS(const char *name, const char *tag, const char *value) {
+    char info[4096] = {0};
+    sprintf(info, "[%s] %s", tag, value);
+    callbackS(name, info);
+}
+
+
+

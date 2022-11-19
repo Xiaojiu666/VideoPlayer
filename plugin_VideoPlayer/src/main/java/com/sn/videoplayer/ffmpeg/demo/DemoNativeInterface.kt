@@ -29,9 +29,15 @@ object DemoNativeInterface {
 
     external fun generatePng(media: Int, path: String)
 
+
+    fun playerInfoCallback(string: String) {
+        Log.d("playerInfoCallback", "generatePngCallback $string");
+        playerInfoCallBack!!.playerInfo(string)
+    }
+
     fun generatePngCallback(string: String) {
         Log.d("DemoNativeInterface", "generatePngCallback $string");
-        if (mediaInfoCallBack != null){
+        if (mediaInfoCallBack != null) {
             mediaInfoCallBack!!.generatePngCallBack(string)
         }
     }
@@ -55,14 +61,18 @@ object DemoNativeInterface {
         mPlayProgress = playProgress
     }
 
-    var mediaInfoCallBack: MediaInfoCallBack? = null;
+    var mediaInfoCallBack: MediaInfoCallBack? = null
 
-    @JvmName("setMediaInfoCallBack1")
-    fun setMediaInfoCallBack(mediaInfoCallBack: MediaInfoCallBack){
-        this.mediaInfoCallBack = mediaInfoCallBack
-    }
+    var playerInfoCallBack: PlayerInfoCallBack? = null
+
+//    @JvmName("setMediaInfoCallBack1")
+//    fun setMediaInfoCallBack(mediaInfoCallBack: MediaInfoCallBack) {
+//        this.mediaInfoCallBack = mediaInfoCallBack
+//    }
 
     init {
         System.loadLibrary("native-lib")
     }
+
+
 }

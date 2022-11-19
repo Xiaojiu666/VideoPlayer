@@ -9,12 +9,10 @@
 
 BaseDecoder::BaseDecoder(JNIEnv *env, jobject obj, jstring path, bool for_synthesizer)
         : m_for_synthesizer(for_synthesizer) {
-    LOG_ERROR("BaseDecoder", "LogSpec()", "Init w start");
     m_obj = env->NewGlobalRef(obj);
+    javaCallback = new Callback(env, obj);
     Init(env, path);
-    LOG_ERROR("BaseDecoder", "LogSpec()", "InitFFMpegDecoder w start");
 //    InitFFMpegDecoder(env);
-    LOG_ERROR("BaseDecoder", "LogSpec()", "InitFFMpegDecoder successful");
     CreateDecodeThread(m_obj);
 }
 
@@ -37,11 +35,11 @@ void BaseDecoder::CreateDecodeThread(jobject obj) {
     std::shared_ptr<BaseDecoder> that(this);
     std::thread t(Decode, that, obj);
     t.detach();
+//    javaCallback->callbackS("playerInfoCallback", "", "DecodeThread create Successful");
 }
 
 void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that, jobject obj) {
     JNIEnv *env;
-
 
     //将线程附加到虚拟机，并获取env
     if (that->m_jvm_for_thread->AttachCurrentThread(&env, NULL) != JNI_OK) {
@@ -87,28 +85,30 @@ void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that, jobject obj) {
 }
 
 void BaseDecoder::InitFFMpegDecoder(JNIEnv *env) {
-    LOG_ERROR(TAG, "LogSpec()", "InitFFMpegDecoder start");
+    LOG_ERROR(TAG, LogSpec(), "InitFFMpegDecoder start");
     //1，初始化上下文
     m_format_ctx = avformat_alloc_context();
-    LOG_ERROR(TAG, "LogSpec()", "InitFFMpegDecoder m_format_ctx");
+    LOG_ERROR(TAG, LogSpec(), "InitFFMpegDecoder m_format_ctx");
     //2，打开文件
     if (avformat_open_input(&m_format_ctx, m_path, NULL, NULL) != 0) {
-        LOG_ERROR(TAG, "LogSpec()", "Fail to open file [%s]", m_path);
+        LOG_ERROR(TAG, LogSpec(), "Fail to open file [%s]", m_path);
         DoneDecode(env);
         return;
     }
-    LOG_ERROR(TAG, "LogSpec()", "InitFFMpegDecoder 2");
     //3，获取音视频流信息
-    if (avformat_find_stream_info(m_format_ctx, NULL) < 0) {
-        LOG_ERROR(TAG, "LogSpec()", "Fail to find stream info");
-        DoneDecode(env);
-        return;
-    }
-    LOG_ERROR(TAG, "LogSpec()", "InitFFMpegDecoder 3");
+//    int info = avformat_find_stream_info(m_format_ctx, NULL);
+//    LOG_ERROR(TAG, LogSpec(), "avformat_find_stream_info info ： %d", info);
+//    if (info < 0) {
+//        LOG_ERROR(TAG, LogSpec(), "Fail to find stream info");
+//        DoneDecode(env);
+//        return;
+//    }
     //4，查找编解码器
     //4.1 获取视频流的索引
     int vIdx = -1;//存放视频流的索引
-    for (int i = 0; i < m_format_ctx->nb_streams; ++i) {
+    unsigned int streams = m_format_ctx->nb_streams;
+    LOG_ERROR(TAG, LogSpec(), "streams size %u", streams);
+    for (int i = 0; i < streams; ++i) {
         if (m_format_ctx->streams[i]->codecpar->codec_type == GetMediaType()) {
             vIdx = i;
             LOG_ERROR(TAG, LogSpec(), "InitFFMpegDecoder %d", vIdx);
@@ -133,21 +133,21 @@ void BaseDecoder::InitFFMpegDecoder(JNIEnv *env) {
     //4.4 获取解码器上下文
     m_codec_ctx = avcodec_alloc_context3(m_codec);
     if (avcodec_parameters_to_context(m_codec_ctx, codecPar) != 0) {
-        LOG_ERROR(TAG, "LogSpec()", "Fail to obtain av codec context");
+        LOG_ERROR(TAG, LogSpec(), "Fail to obtain av codec context");
         DoneDecode(env);
         return;
     }
 
     //5，打开解码器
     if (avcodec_open2(m_codec_ctx, m_codec, NULL) < 0) {
-        LOG_ERROR(TAG, "LogSpec()", "Fail to open av codec");
+        LOG_ERROR(TAG, LogSpec(), "Fail to open av codec");
         DoneDecode(env);
         return;
     }
 
     m_duration = (long) ((float) m_format_ctx->duration / AV_TIME_BASE * 1000);
 
-    LOG_INFO(TAG, "LogSpec()", "Decoder init success")
+    LOG_INFO(TAG, LogSpec(), "Decoder init success")
 }
 
 void BaseDecoder::AllocFrameBuffer() {
@@ -318,7 +318,7 @@ void BaseDecoder::SyncRender() {
 }
 
 void BaseDecoder::DoneDecode(JNIEnv *env) {
-    LOG_INFO(TAG, "LogSpec()", "Decode done and decoder release")
+    LOG_INFO(TAG, LogSpec(), "Decode done and decoder release")
     // 释放缓存
     if (m_packet != NULL) {
         av_packet_free(&m_packet);
@@ -383,11 +383,11 @@ int BaseDecoder::CurrentTime() {
 int BaseDecoder::VideoTotalTime() {
     char info[40960] = {0};
     //4，获取音视频流信息
-    LOG_INFO(TAG, "LogSpec()", "VideoTime = start")
+    LOG_INFO(TAG, LogSpec(), "VideoTime = start")
     if (m_format_ctx->duration != AV_NOPTS_VALUE) {
         int hours, mins, secs, us;
         int64_t duration = m_format_ctx->duration + 5000;
-        LOG_INFO(TAG, "LogSpec()", "VideoTime = m_format_ctx%lld", m_format_ctx->duration)
+        LOG_INFO(TAG, LogSpec(), "VideoTime = m_format_ctx%lld", m_format_ctx->duration)
 //        secs = duration / AV_TIME_BASE;
 //        us = duration % AV_TIME_BASE;
 //        mins = secs / 60;
@@ -396,30 +396,30 @@ int BaseDecoder::VideoTotalTime() {
 //        mins %= 60;
         return duration / AV_TIME_BASE;
     }
-    LOG_INFO(TAG, "LogSpec()", "VideoTotalTime = 0")
+    LOG_INFO(TAG, LogSpec(), "VideoTotalTime = 0")
     return 0;
 }
 
 char *BaseDecoder::VideoTime() {
     char info[40960] = {0};
     //4，获取音视频流信息
-    LOG_INFO(TAG, "LogSpec()", "VideoTime = start")
+    LOG_INFO(TAG, LogSpec(), "VideoTime = start")
     if (m_format_ctx->duration != AV_NOPTS_VALUE) {
         int hours, mins, secs, us;
         int64_t duration = m_format_ctx->duration + 5000;
-        LOG_INFO(TAG, "LogSpec()", "VideoTime = m_format_ctx%lld", m_format_ctx->duration)
+        LOG_INFO(TAG, LogSpec(), "VideoTime = m_format_ctx%lld", m_format_ctx->duration)
         secs = duration / AV_TIME_BASE;
         us = duration % AV_TIME_BASE;
         mins = secs / 60;
         secs %= 60;
         hours = mins / 60;
         mins %= 60;
-        LOG_ERROR(TAG, "LogSpec()", "%02d:%02d:%02d.%02d\n", hours, mins, secs,
+        LOG_ERROR(TAG, LogSpec(), "%02d:%02d:%02d.%02d\n", hours, mins, secs,
                   (100 * us) / AV_TIME_BASE)
         snprintf(info, 40960, "%02d:%02d:%02d", hours, mins, secs);
         return info;
     }
-    LOG_INFO(TAG, "LogSpec()", "VideoTime = NUll")
+    LOG_INFO(TAG, LogSpec(), "VideoTime = NUll")
     return NULL;
 }
 

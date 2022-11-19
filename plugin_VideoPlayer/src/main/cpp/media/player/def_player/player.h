@@ -8,6 +8,7 @@
 
 #include "../../decoder/video/v_decoder.h"
 #include "../../decoder/audio/a_decoder.h"
+#include "../../utils/callback.h"
 //#include "../../../opengl/drawer/video_drawer.h"
 //#include "../../../opengl/drawer/proxy/drawer_proxy.h"
 //#include "../../render/video/opengl_render/opengl_render.h"
@@ -20,14 +21,21 @@ private:
     AudioDecoder *m_a_decoder;
     AudioRender *m_a_render;
 
+    Callback *javaCallback;
+
 
 public:
     Player(JNIEnv *jniEnv,jobject obj, jstring path, jobject surface);
+
     ~Player();
 
     void play();
+
     void pause();
+
     char* viedeotime();
+
+
     int videoTimeTotal();
 
 };

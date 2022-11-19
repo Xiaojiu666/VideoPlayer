@@ -13,6 +13,7 @@
 #include "../../utils/logger.h"
 #include "i_decoder.h"
 #include "decode_state.h"
+#include "../../utils/callback.h"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -55,6 +56,9 @@ private:
 
     // 解码状态
     DecodeState m_state = STOP;
+
+    //
+    Callback *javaCallback;
 
 
     // 数据流索引

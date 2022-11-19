@@ -104,7 +104,7 @@ protected:
     }
 
     const char *const LogSpec() override {
-        return "AUDIOXXXX";
+        return "AudioDecoder";
     };
 };
 

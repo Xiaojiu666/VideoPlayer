@@ -93,7 +93,7 @@ protected:
     void Release() override;
 
     const char *const LogSpec() override {
-        return "VIDEOXXXX";
+        return "VideoDecoder";
     };
 };
 
