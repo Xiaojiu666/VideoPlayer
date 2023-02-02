@@ -70,12 +70,10 @@ void VideoDecoder::InitSws() {
     m_sws_ctx = sws_getContext(width(), height(), video_pixel_format(),
                                m_dst_w, m_dst_h, DST_FORMAT,
                                SWS_FAST_BILINEAR, NULL, NULL, NULL);
-    m_sws_ctx1 = sws_getContext(width(), height(), video_pixel_format(),
-                                m_dst_w, m_dst_h, AV_PIX_FMT_YUV420P,
-                                SWS_FAST_BILINEAR, NULL, NULL, NULL);
 }
 
 void VideoDecoder::Render(AVFrame *frame, JNIEnv *env, jobject obj) {
+    LOG_INFO(TAG, LogSpec(), "Render start")
     LOG_INFO(TAG, LogSpec(), "Render= %d", frame->key_frame)
     double d = frame->best_effort_timestamp * av_q2d(time_base());
     LOG_INFO(TAG, LogSpec(), "Render best_effort_timestamp = %f",
@@ -110,7 +108,7 @@ void VideoDecoder::Render(AVFrame *frame, JNIEnv *env, jobject obj) {
             Wait(0, 200);
         }
     }
-    LOG_INFO(TAG, LogSpec(), "Render= %s", "end")
+    LOG_INFO(TAG, LogSpec(), "Render end")
 }
 
 bool VideoDecoder::NeedLoopDecode() {

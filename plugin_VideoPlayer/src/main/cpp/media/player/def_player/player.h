@@ -33,8 +33,7 @@ public:
 
     void pause();
 
-    char* viedeotime();
-
+    void setMediaSeekTime(int time);
 
     int videoTimeTotal();
 

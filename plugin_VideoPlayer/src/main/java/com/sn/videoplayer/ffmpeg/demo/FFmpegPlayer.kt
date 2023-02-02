@@ -26,9 +26,9 @@ class FFmpegPlayer : PlayerControl() {
         return DemoNativeInterface.ffmpegInfo()
     }
 
-    fun getVideoTime(playId: Int):String{
-        return DemoNativeInterface.videoTime(playId)
-    }
+//    fun getVideoTime(playId: Int):String{
+//        return DemoNativeInterface.setSeekTime(playId)
+//    }
 
     fun getVideoTotalTime(playId: Int):Int{
         return DemoNativeInterface.videoTotalTime(playId)

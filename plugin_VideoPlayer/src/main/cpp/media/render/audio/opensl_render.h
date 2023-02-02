@@ -84,6 +84,7 @@ private:
         pthread_mutex_lock(&m_cache_mutex);
         pthread_cond_wait(&m_cache_cond, &m_cache_mutex);
         pthread_mutex_unlock(&m_cache_mutex);
+
     }
 
     void SendCacheReadySignal() {

@@ -130,10 +130,13 @@ Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_threadStop(JNIEnv *env,
 }
 
 JNIEXPORT jstring JNICALL
-Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_videoTime(JNIEnv *env, jobject thiz,
-                                                                  jint player) {
+Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_setSeekTime(JNIEnv *env, jobject thiz,
+                                                                  jint player,
+                                                                  jint seekTime) {
     Player *p = (Player *) player;
-    return env->NewStringUTF(p->viedeotime());
+    p->setMediaSeekTime(seekTime);
+    LOGE(TAG, "setSeekTime %d", seekTime)
+    return env->NewStringUTF("");
 }
 
 JNIEXPORT jint JNICALL

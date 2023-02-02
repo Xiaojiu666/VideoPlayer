@@ -19,65 +19,77 @@ set(ffmpeg_head_dir ${CMAKE_SOURCE_DIR}/ffmpeg)
 # 2. 添加头文件目录
 include_directories(${ffmpeg_head_dir}/include)
 
+# 配置 repidjson 库
+#set(HEADER_RAPIDJSON_INC ${CMAKE_SOURCE_DIR}/repidjson/include)
+#include_directories(${HEADER_RAPIDJSON_INC})  # 增加include
+#
+#include_directories(jsoncpp)
+#add_subdirectory(jsoncpp)
 
+#add_library(jsoncpp
+#        SHARED
+#        ${CMAKE_SOURCE_DIR}/jsoncpp)
+#set_target_properties( jsoncpp
+#        PROPERTIES IMPORTED_LOCATION
+#        ${CMAKE_SOURCE_DIR}/jsoncpp )
 
-add_library( image
+add_library(image
         SHARED
-        IMPORTED )
-set_target_properties( image
+        IMPORTED)
+set_target_properties(image
         PROPERTIES IMPORTED_LOCATION
-        ${ffmpeg_lib_dir}/libpng.so )
+        ${ffmpeg_lib_dir}/libpng.so)
 
 
 # 3. 添加ffmpeg相关的so库
-add_library( avutil
-        SHARED
-        IMPORTED )
-set_target_properties( avutil
-        PROPERTIES IMPORTED_LOCATION
-        ${ffmpeg_lib_dir}/libavutil.so )
-
-add_library( swresample
-        SHARED
-        IMPORTED )
-set_target_properties( swresample
-        PROPERTIES IMPORTED_LOCATION
-        ${ffmpeg_lib_dir}/libswresample.so )
-
-add_library( avcodec
-        SHARED
-        IMPORTED )
-set_target_properties( avcodec
-        PROPERTIES IMPORTED_LOCATION
-        ${ffmpeg_lib_dir}/libavcodec.so )
-
-add_library( avfilter
+add_library(avutil
         SHARED
         IMPORTED)
-set_target_properties( avfilter
+set_target_properties(avutil
         PROPERTIES IMPORTED_LOCATION
-        ${ffmpeg_lib_dir}/libavfilter.so )
+        ${ffmpeg_lib_dir}/libavutil.so)
 
-add_library( swscale
+add_library(swresample
         SHARED
         IMPORTED)
-set_target_properties( swscale
+set_target_properties(swresample
         PROPERTIES IMPORTED_LOCATION
-        ${ffmpeg_lib_dir}/libswscale.so )
+        ${ffmpeg_lib_dir}/libswresample.so)
 
-add_library( avformat
+add_library(avcodec
         SHARED
         IMPORTED)
-set_target_properties( avformat
+set_target_properties(avcodec
         PROPERTIES IMPORTED_LOCATION
-        ${ffmpeg_lib_dir}/libavformat.so )
+        ${ffmpeg_lib_dir}/libavcodec.so)
 
-add_library( avdevice
+add_library(avfilter
         SHARED
         IMPORTED)
-set_target_properties( avdevice
+set_target_properties(avfilter
         PROPERTIES IMPORTED_LOCATION
-        ${ffmpeg_lib_dir}/libavdevice.so )
+        ${ffmpeg_lib_dir}/libavfilter.so)
+
+add_library(swscale
+        SHARED
+        IMPORTED)
+set_target_properties(swscale
+        PROPERTIES IMPORTED_LOCATION
+        ${ffmpeg_lib_dir}/libswscale.so)
+
+add_library(avformat
+        SHARED
+        IMPORTED)
+set_target_properties(avformat
+        PROPERTIES IMPORTED_LOCATION
+        ${ffmpeg_lib_dir}/libavformat.so)
+
+add_library(avdevice
+        SHARED
+        IMPORTED)
+set_target_properties(avdevice
+        PROPERTIES IMPORTED_LOCATION
+        ${ffmpeg_lib_dir}/libavdevice.so)
 
 # 查找代码中使用到的系统库
 find_library( # Sets the name of the path variable.
@@ -85,16 +97,16 @@ find_library( # Sets the name of the path variable.
 
         # Specifies the name of the NDK library that
         # you want CMake to locate.
-        log )
-add_library( h264
+        log)
+add_library(h264
         SHARED
         IMPORTED)
-set_target_properties( h264
+set_target_properties(h264
         PROPERTIES IMPORTED_LOCATION
-        ${ffmpeg_lib_dir}/libh264.so )
+        ${ffmpeg_lib_dir}/libh264.so)
 #找打Android lib库里面的libOpenSLES.so的库
-find_library( OpenSLES-lib
-        OpenSLES )
+find_library(OpenSLES-lib
+        OpenSLES)
 
 # 配置目标so库编译信息
 add_library( # Sets the name of the library.
@@ -112,8 +124,8 @@ add_library( # Sets the name of the library.
         ${CMAKE_SOURCE_DIR}/utils/callback.h
         ${CMAKE_SOURCE_DIR}/utils/callback.cpp
         ${CMAKE_SOURCE_DIR}/media/const.h
-#
-#        # 解码器
+        #
+        #        # 解码器
         ${CMAKE_SOURCE_DIR}/media/one_frame.h
         ${CMAKE_SOURCE_DIR}/media/decoder/i_decoder.h
         ${CMAKE_SOURCE_DIR}/media/decoder/decode_state.h
@@ -124,7 +136,7 @@ add_library( # Sets the name of the library.
 
         # 播放器
         ${CMAKE_SOURCE_DIR}/media/player/def_player/player.cpp
-#        ${CMAKE_SOURCE_DIR}/media/player/gl_player/gl_player.cpp
+        #        ${CMAKE_SOURCE_DIR}/media/player/gl_player/gl_player.cpp
 
         # 渲染器
         # 必须以来.h 在依赖CPP
@@ -136,10 +148,25 @@ add_library( # Sets the name of the library.
         ${CMAKE_SOURCE_DIR}/media/info/media.h
         ${CMAKE_SOURCE_DIR}/media/info/media.cpp
 
+        ${CMAKE_SOURCE_DIR}/media/info/media.h
+        ${CMAKE_SOURCE_DIR}/media/info/media.cpp
 
-
-
-
+        #jsoncpp 引用 https://blog.csdn.net/lftaoyuan/article/details/107057766
+        jsoncpp/json_tool.h
+        jsoncpp/json_reader.cpp
+        jsoncpp/json_valueiterator.inl
+        jsoncpp/json_value.cpp
+        jsoncpp/json_writer.cpp
+        jsoncpp/assertions.h
+        jsoncpp/allocator.h
+        jsoncpp/config.h
+        jsoncpp/json_features.h
+        jsoncpp/forwards.h
+        jsoncpp/json.h
+        jsoncpp/reader.h
+        jsoncpp/value.h
+        jsoncpp/version.h
+        jsoncpp/writer.h
         )
 
 # 指定编译目标库时，cmake要链接的库
@@ -159,12 +186,13 @@ target_link_libraries(
         avdevice
         h264
         -landroid
-#        ESOpenSL
-#        -lEGL
-#        -lGLESv2
+        #        ESOpenSL
+        #        -lEGL
+        #        -lGLESv2
         # Links the target library to the log library
         # included in the NDK.
         ${OpenSLES-lib}
         ${log-lib}
         image
+#        jsoncpp
 )

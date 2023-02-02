@@ -83,7 +83,7 @@
     </ScrollView>
 
     <com.sn.videoplayer.view.VideoSeekBar
-        android:id="@+id/seekBar"
+        android:id="@+id/video_seek_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/sfv"

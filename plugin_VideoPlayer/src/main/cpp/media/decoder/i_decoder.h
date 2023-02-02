@@ -26,7 +26,7 @@ public:
 
     virtual void SetStateReceiver(IDecodeStateCb *cb) = 0;
 
-    virtual char *VideoTime() = 0;
+    virtual void setMediaSeekTime(int timestamp) = 0;
 
     virtual int CurrentTime() = 0;
 

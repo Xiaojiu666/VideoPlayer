@@ -47,12 +47,11 @@ void Player::pause() {
     }
 }
 
-char *Player::viedeotime() {
+void Player::setMediaSeekTime(int time) {
     if (m_v_decoder != NULL) {
-        char *string = m_v_decoder->VideoTime();
-        return string;
+        m_v_decoder->setMediaSeekTime(time);
+        m_a_decoder->setMediaSeekTime(time);
     }
-    return NULL;
 }
 
 int Player::videoTimeTotal() {

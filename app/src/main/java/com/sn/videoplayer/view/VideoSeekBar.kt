@@ -6,9 +6,11 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.SeekBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.sn.videoplayer.R
+import com.sn.videoplayer.utils.Time.formatSeconds
 import kotlinx.android.synthetic.main.video_seek_bar.view.*
 import java.time.Duration
 
@@ -18,11 +20,12 @@ class VideoSeekBar @JvmOverloads constructor(
     defStyleAttr: Int = -1
 ) : LinearLayout(context, attrs, defStyleAttr) {
     private val tvSeekBarTotalTime: TextView
-
+    val videoSeekBar: SeekBar
 
     init {
         val rootView = inflate(context, R.layout.video_seek_bar, this)
-        tvSeekBarTotalTime = findViewById<View>(R.id.tv_seekbar_total_time) as TextView
+        tvSeekBarTotalTime = rootView.findViewById<View>(R.id.tv_seekbar_total_time) as TextView
+        videoSeekBar = rootView.findViewById(R.id.seek_time_progress) as SeekBar
     }
 
     fun setTotalTime(totalTime: String?) {
@@ -40,19 +43,5 @@ class VideoSeekBar @JvmOverloads constructor(
         tv_seek_current_time.text = formatSeconds(double)
     }
 
-    fun formatSeconds(timeInSeconds: Int): String {
-        val hours = timeInSeconds / 3600
-        val secondsLeft = timeInSeconds - hours * 3600
-        val minutes = secondsLeft / 60
-        val seconds = secondsLeft - minutes * 60
-        var formattedTime = ""
-        if (hours < 10) formattedTime += "0"
-        formattedTime += "$hours:"
-        if (minutes < 10) formattedTime += "0"
-        formattedTime += "$minutes:"
-        if (seconds < 10) formattedTime += "0"
-        formattedTime += seconds
-        return formattedTime
-    }
 
 }

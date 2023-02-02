@@ -6,13 +6,15 @@
 
 #include "base_decoder.h"
 #include "../../utils/timer.c"
+#include "../../jsoncpp/value.h"
+
+class Value;
 
 BaseDecoder::BaseDecoder(JNIEnv *env, jobject obj, jstring path, bool for_synthesizer)
         : m_for_synthesizer(for_synthesizer) {
     m_obj = env->NewGlobalRef(obj);
     javaCallback = new Callback(env, obj);
     Init(env, path);
-//    InitFFMpegDecoder(env);
     CreateDecodeThread(m_obj);
 }
 
@@ -35,17 +37,20 @@ void BaseDecoder::CreateDecodeThread(jobject obj) {
     std::shared_ptr<BaseDecoder> that(this);
     std::thread t(Decode, that, obj);
     t.detach();
-//    javaCallback->callbackS("playerInfoCallback", "", "DecodeThread create Successful");
 }
 
 void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that, jobject obj) {
     JNIEnv *env;
-
     //将线程附加到虚拟机，并获取env
+    const char *decoderTag = that->LogSpec();
     if (that->m_jvm_for_thread->AttachCurrentThread(&env, NULL) != JNI_OK) {
-        LOG_ERROR(that->TAG, that->LogSpec(), "Fail to Init decode thread");
+        LOG_ERROR(that->TAG, decoderTag, "Fail to Init decode thread");
         return;
     }
+    Callback *pCallback = new Callback(env, obj);
+    int x = 123;
+    pCallback->callbackS(playerInfoCallback, decoderTag, "DecodeThread create Successful");
+
 //    if (env == NULL) {
 //        LOGE("Decode", "env is null")
 //        return;
@@ -66,25 +71,38 @@ void BaseDecoder::Decode(std::shared_ptr<BaseDecoder> that, jobject obj) {
 
     that->CallbackState(PREPARE);
 
-    that->InitFFMpegDecoder(env);
-    LOG_ERROR(that->TAG, that->LogSpec(), "InitFFMpegDecoder successful");
+    that->InitFFMpegDecoder(env, pCallback);
+
+    pCallback->callbackS(playerInfoCallback, decoderTag, "InitFFMpegDecoder successful");
+
+    LOG_ERROR(that->TAG, decoderTag, "InitFFMpegDecoder successful");
+
     that->AllocFrameBuffer();
-    LOG_ERROR(that->TAG, that->LogSpec(), "AllocFrameBuffer successful");
     av_usleep(1000);
+    pCallback->callbackS(playerInfoCallback, decoderTag, "AllocFrameBuffer successful");
+    LOG_ERROR(that->TAG, decoderTag, "AllocFrameBuffer successful");
+
     that->Prepare(env);
-    LOG_ERROR(that->TAG, that->LogSpec(), "Prepare successful");
+    pCallback->callbackS(playerInfoCallback, decoderTag, "Prepare successful");
+    LOG_ERROR(that->TAG, decoderTag, "Prepare successful");
+
     that->LoopDecode(env, obj);
-    LOG_ERROR(that->TAG, that->LogSpec(), "LoopDecode successful");
+    pCallback->callbackS(playerInfoCallback, decoderTag, "LoopDecode successful");
+    LOG_ERROR(that->TAG, decoderTag, "LoopDecode successful");
+
     that->DoneDecode(env);
-    LOG_ERROR(that->TAG, that->LogSpec(), "DoneDecode successful");
+    pCallback->callbackS(playerInfoCallback, decoderTag, "DoneDecode successful");
+    LOG_ERROR(that->TAG, decoderTag, "DoneDecode successful");
+
     that->CallbackState(STOP);
+    pCallback->callbackS(playerInfoCallback, decoderTag, "STOP successful");
 
     //解除线程和jvm关联
     that->m_jvm_for_thread->DetachCurrentThread();
 
 }
 
-void BaseDecoder::InitFFMpegDecoder(JNIEnv *env) {
+void BaseDecoder::InitFFMpegDecoder(JNIEnv *env, Callback *callback) {
     LOG_ERROR(TAG, LogSpec(), "InitFFMpegDecoder start");
     //1，初始化上下文
     m_format_ctx = avformat_alloc_context();
@@ -96,13 +114,13 @@ void BaseDecoder::InitFFMpegDecoder(JNIEnv *env) {
         return;
     }
     //3，获取音视频流信息
-//    int info = avformat_find_stream_info(m_format_ctx, NULL);
-//    LOG_ERROR(TAG, LogSpec(), "avformat_find_stream_info info ： %d", info);
-//    if (info < 0) {
-//        LOG_ERROR(TAG, LogSpec(), "Fail to find stream info");
-//        DoneDecode(env);
-//        return;
-//    }
+    int info = avformat_find_stream_info(m_format_ctx, NULL);
+    LOG_ERROR(TAG, LogSpec(), "avformat_find_stream_info info ： %d", info);
+    if (info < 0) {
+        LOG_ERROR(TAG, LogSpec(), "Fail to find stream info");
+        DoneDecode(env);
+        return;
+    }
     //4，查找编解码器
     //4.1 获取视频流的索引
     int vIdx = -1;//存放视频流的索引
@@ -124,7 +142,8 @@ void BaseDecoder::InitFFMpegDecoder(JNIEnv *env) {
     m_stream_index = vIdx;
 
     //4.2 获取解码器参数
-    AVCodecParameters *codecPar = m_format_ctx->streams[vIdx]->codecpar;
+    AVStream *pStream = m_format_ctx->streams[vIdx];
+    AVCodecParameters *codecPar = pStream->codecpar;
 
     //4.3 获取解码器
 //    m_codec = avcodec_find_decoder_by_name("h264_mediacodec");//硬解码
@@ -145,9 +164,23 @@ void BaseDecoder::InitFFMpegDecoder(JNIEnv *env) {
         return;
     }
 
-    m_duration = (long) ((float) m_format_ctx->duration / AV_TIME_BASE * 1000);
+    if (codecPar->codec_type == AVMEDIA_TYPE_VIDEO) {
+        m_duration = (int) (m_format_ctx->duration / AV_TIME_BASE);
+        int64_t frames = pStream->nb_frames;
+        m_bit_rate = (int) (m_format_ctx->bit_rate / 1000);
+        int m_width = pStream->codecpar->width;
+        int m_height = pStream->codecpar->height;
 
-    LOG_INFO(TAG, LogSpec(), "Decoder init success")
+        user["duration"] = m_duration;
+        user["bitRate"] = m_bit_rate;
+        user["frames"] = frames;
+        user["width"] = m_width;
+        user["height"] = m_height;
+        const char *string = user.toStyledString().c_str();
+        callback->callbackS(mediaInfoCallback, string);
+    }
+
+    LOG_INFO(TAG, LogSpec(), "Decoder init success ")
 }
 
 void BaseDecoder::AllocFrameBuffer() {
@@ -162,16 +195,17 @@ void BaseDecoder::LoopDecode(JNIEnv *env, jobject obj) {
     if (STOP == m_state) { // 如果已被外部改变状态，维持外部配置
         m_state = START;
     }
-
     CallbackState(START);
 
-    LOG_INFO(TAG, LogSpec(), "Start loop decode")
+
     while (1) {
+        LOG_INFO(TAG, LogSpec(), " -- LoopDecode start --")
         if (m_state != DECODING &&
             m_state != START &&
             m_state != STOP) {
             CallbackState(m_state);
             Wait();
+            LOG_INFO(TAG, LogSpec(), "Decoder run into Wait, state：%s", GetStateStr())
             CallbackState(m_state);
             // 恢复同步起始时间，去除等待流失的时间
             m_started_t = GetCurMsTime() - m_cur_t_s;
@@ -185,11 +219,11 @@ void BaseDecoder::LoopDecode(JNIEnv *env, jobject obj) {
             m_started_t = GetCurMsTime();
         }
 
+
         if (DecodeOneFrame() != NULL) {
             LOG_INFO(TAG, LogSpec(), "DecodeOneFrame= %s", "successful")
             SyncRender();
             Render(m_frame, env, obj);
-            LOG_INFO(TAG, LogSpec(), "LoopDecode Render= %s", "end")
             if (m_state == START) {
                 m_state = PAUSE;
             }
@@ -202,20 +236,39 @@ void BaseDecoder::LoopDecode(JNIEnv *env, jobject obj) {
             }
             CallbackState(FINISH);
         }
+        LOG_INFO(TAG, LogSpec(), "-- LoopDecode end --")
     }
-    LOG_INFO(TAG, LogSpec(), "LoopDecode= %s", "end")
 }
 
 AVFrame *BaseDecoder::DecodeOneFrame() {
     //从媒体流中读取帧填充到填充到Packet的数据缓存空间。
+
+    if (m_SeekPosition > 0) {
+        int64_t timestamp_in_stream_time_base = av_rescale_q(m_SeekPosition * AV_TIME_BASE,
+                                                             AV_TIME_BASE_Q,
+                                                             time_base());
+        int64_t pts = m_SeekPosition / av_q2d(time_base());
+        LOG_INFO(TAG, LogSpec(),
+                 " -- timestamp_in_stream_time_base -- %lli --   %lli  -- %i , -- %i",
+                 timestamp_in_stream_time_base, pts, time_base().den, time_base().num);
+        int64_t seek_target = static_cast<int64_t>(m_SeekPosition * 1000000);//微秒
+        int64_t seek_min = INT64_MIN;
+        int64_t seek_max = INT64_MAX;
+        int seek_ret = avformat_seek_file(m_format_ctx, m_stream_index, seek_min, pts, seek_max, 0);
+//        int i = av_seek_frame(m_format_ctx, m_stream_index, pts,
+//                              AVSEEK_FLAG_BACKWARD);
+        if (seek_ret >= 0) {
+            m_SeekPosition = 0;
+        }//        avcodec_flush_buffers(m_codec_ctx);
+//        GoOn();
+    }
+
     int ret = av_read_frame(m_format_ctx, m_packet);
     while (ret == 0) {
-        LOG_INFO(TAG, LogSpec(), "start stream_index = %d", m_packet->stream_index)
-        LOG_INFO(TAG, LogSpec(), "m_stream_index1  = %d", m_stream_index)
+        LOG_ERROR(TAG, LogSpec(), "start stream_index = %d", m_packet->stream_index)
         // stream_index Packet所在stream的index
         if (m_packet->stream_index == m_stream_index) {
             //发送数据到ffmepg，放到解码队列中
-            LOG_INFO(TAG, LogSpec(), "m_packet->stream_index  = true")
             LOG_ERROR(TAG, LogSpec(), "Decode error: %d", -2);
             switch (avcodec_send_packet(m_codec_ctx, m_packet)) {
                 case AVERROR_EOF: {
@@ -236,7 +289,7 @@ AVFrame *BaseDecoder::DecodeOneFrame() {
                     LOG_ERROR(TAG, LogSpec(), "Decode error: %s", av_err2str(AVERROR(ENOMEM)));
                     break;
             }
-            LOG_INFO(TAG, LogSpec(), "m_frame = %d", m_frame->key_frame)
+            LOG_ERROR(TAG, LogSpec(), "m_frame = %d", m_frame->key_frame)
             LOG_INFO(TAG, LogSpec(), "m_codec_ctx = %d", m_codec_ctx->codec_type)
             //TODO 这里需要考虑一个packet有可能包含多个frame的情况
             //将成功的解码队列中取出1个frame
@@ -261,7 +314,7 @@ AVFrame *BaseDecoder::DecodeOneFrame() {
     }
     LOG_INFO(TAG, LogSpec(), "end stream_index = %d", m_packet->stream_index)
     av_packet_unref(m_packet);
-    LOGI(TAG, "ret = %s", av_err2str(AVERROR(ret)))
+    LOG_INFO(TAG, LogSpec(), "ret = %s", av_err2str(AVERROR(ret)))
     return NULL;
 }
 
@@ -292,15 +345,34 @@ void BaseDecoder::CallbackState(DecodeState status) {
 }
 
 void BaseDecoder::ObtainTimeStamp() {
+    if (LogSpec() == "VideoDecoder") {
+        LOG_INFO(TAG, LogSpec(), "ObtainTimeStamp frame %u dts= %lli , pts = %lli ",
+                 m_frame->pict_type, m_packet->dts, m_packet->pts)
+    }
     if (m_frame->pkt_dts != AV_NOPTS_VALUE) {
         m_cur_t_s = m_packet->dts;
+        if (LogSpec() == "VideoDecoder") {
+            LOG_INFO(TAG, LogSpec(), "ObtainTimeStamp  m_packet->dts   %i ", m_cur_t_s)
+        }
     } else if (m_frame->pts != AV_NOPTS_VALUE) {
         m_cur_t_s = m_frame->pts;
+        if (LogSpec() == "VideoDecoder") {
+            LOG_INFO(TAG, LogSpec(), "ObtainTimeStamp  m_frame->pts   %i ", m_cur_t_s)
+        }
     } else {
         m_cur_t_s = 0;
+        if (LogSpec() == "VideoDecoder") {
+            LOG_INFO(TAG, LogSpec(), "ObtainTimeStamp m_cur_t_s  %i ", m_cur_t_s)
+        }
     }
     m_cur_t_s = (int64_t) ((m_cur_t_s * av_q2d(m_format_ctx->streams[m_stream_index]->time_base)) *
                            1000);
+    if (LogSpec() == "VideoDecoder") {
+        LOG_INFO(TAG, LogSpec(), "ObtainTimeStamp m_cur_t_s  %i  time_base %d  %d", m_cur_t_s,
+                 m_format_ctx->streams[m_stream_index]->time_base.den,
+                 m_format_ctx->streams[m_stream_index]->time_base.num)
+    }
+
 }
 
 void BaseDecoder::SyncRender() {
@@ -309,11 +381,12 @@ void BaseDecoder::SyncRender() {
 //        av_usleep(15000);
         return;
     }
-    int64_t ct = GetCurMsTime();
-    int64_t passTime = ct - m_started_t;
-    if (m_cur_t_s > passTime) {
-        av_usleep((unsigned int) ((m_cur_t_s - passTime) * 1000));
-    }
+    //TODO: 解决前进seek播放暂停问题 ，暂时注解
+//    int64_t ct = GetCurMsTime();
+//    int64_t passTime = ct - m_started_t;
+//    if (m_cur_t_s > passTime) {
+//        av_usleep((unsigned int) ((m_cur_t_s - passTime) * 1000));
+//    }
     LOG_INFO(TAG, LogSpec(), "SyncRender= %s", "end")
 }
 
@@ -349,7 +422,9 @@ void BaseDecoder::DoneDecode(JNIEnv *env) {
 void BaseDecoder::Wait(long second, long ms) {
     LOG_INFO(TAG, LogSpec(), "Decoder run into wait, state：%s", GetStateStr())
     pthread_mutex_lock(&m_mutex);
+    LOG_INFO(TAG, LogSpec(), "Decoder run into wait, state：%d", 1)
     if (second > 0 || ms > 0) {
+        LOG_INFO(TAG, LogSpec(), "Decoder run into wait, state：%d", 2)
         timeval now;
         timespec outtime;
         gettimeofday(&now, NULL);
@@ -358,6 +433,8 @@ void BaseDecoder::Wait(long second, long ms) {
         outtime.tv_nsec = static_cast<long>(destNSec % 1000000000);
         pthread_cond_timedwait(&m_cond, &m_mutex, &outtime);
     } else {
+        LOG_INFO(TAG, LogSpec(), "Decoder run into wait, state：%f", 2.1)
+        //阻塞当前线程，等待其他唤醒
         pthread_cond_wait(&m_cond, &m_mutex);
     }
     pthread_mutex_unlock(&m_mutex);
@@ -370,10 +447,6 @@ void BaseDecoder::SendSignal() {
     pthread_mutex_unlock(&m_mutex);
 }
 
-void BaseDecoder::GoOn() {
-    m_state = DECODING;
-    SendSignal();
-}
 
 int BaseDecoder::CurrentTime() {
 
@@ -400,28 +473,56 @@ int BaseDecoder::VideoTotalTime() {
     return 0;
 }
 
-char *BaseDecoder::VideoTime() {
+void BaseDecoder::setMediaSeekTime(int time) {
     char info[40960] = {0};
     //4，获取音视频流信息
     LOG_INFO(TAG, LogSpec(), "VideoTime = start")
-    if (m_format_ctx->duration != AV_NOPTS_VALUE) {
-        int hours, mins, secs, us;
-        int64_t duration = m_format_ctx->duration + 5000;
-        LOG_INFO(TAG, LogSpec(), "VideoTime = m_format_ctx%lld", m_format_ctx->duration)
-        secs = duration / AV_TIME_BASE;
-        us = duration % AV_TIME_BASE;
-        mins = secs / 60;
-        secs %= 60;
-        hours = mins / 60;
-        mins %= 60;
-        LOG_ERROR(TAG, LogSpec(), "%02d:%02d:%02d.%02d\n", hours, mins, secs,
-                  (100 * us) / AV_TIME_BASE)
-        snprintf(info, 40960, "%02d:%02d:%02d", hours, mins, secs);
-        return info;
-    }
-    LOG_INFO(TAG, LogSpec(), "VideoTime = NUll")
-    return NULL;
+    m_SeekPosition = time;
+//    Stop();
+//
+//    int64_t timestamp_in_stream_time_base = av_rescale_q(time * AV_TIME_BASE, AV_TIME_BASE_Q,
+//                                                         time_base());
+//    int64_t pts = time / av_q2d(time_base());
+//
+//
+//    LOG_INFO(TAG, LogSpec(), " -- timestamp_in_stream_time_base -- %lli --   %lli  -- %i , -- %i",
+//             timestamp_in_stream_time_base, pts, time_base().den, time_base().num);
+//    int64_t seek_target = static_cast<int64_t>(time * 1000000);//微秒
+//    int64_t seek_min = INT64_MIN;
+//    int64_t seek_max = INT64_MAX;
+//    int seek_ret = avformat_seek_file(m_format_ctx, -1, seek_min, seek_target, seek_max, 0);
+////    av_seek_frame(m_format_ctx, m_stream_index, pts,
+////                  AVSEEK_FLAG_ANY);
+//    avcodec_flush_buffers(m_codec_ctx);
+//    GoOn();
+//        if (m_state == START) {
+//            m_state = DECODING;
+//        }
+//    avcodec_flush_buffers(m_codec_ctx);
+//    if (m_format_ctx->duration != AV_NOPTS_VALUE) {
+//        int hours, mins, secs, us;
+//        int64_t duration = m_format_ctx->duration + 5000;
+//        LOG_INFO(TAG, LogSpec(), "VideoTime = m_format_ctx%lld", m_format_ctx->duration)
+//        secs = duration / AV_TIME_BASE;
+//        us = duration % AV_TIME_BASE;
+//        mins = secs / 60;
+//        secs %= 60;
+//        hours = mins / 60;
+//        mins %= 60;
+//        LOG_ERROR(TAG, LogSpec(), "%02d:%02d:%02d.%02d\n", hours, mins, secs,
+//                  (100 * us) / AV_TIME_BASE)
+//        snprintf(info, 40960, "%02d:%02d:%02d", hours, mins, secs);
+//        return info;
+//    }
+//    LOG_INFO(TAG, LogSpec(), "VideoTime = NUll")
+//    return NULL;
 }
+
+void BaseDecoder::GoOn() {
+    m_state = DECODING;
+    SendSignal();
+}
+
 
 void BaseDecoder::Pause() {
     m_state = PAUSE;

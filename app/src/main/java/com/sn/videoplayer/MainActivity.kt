@@ -71,18 +71,7 @@ class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
         guideAdapter.onClickListener = this
 
 
-        val request = OneTimeWorkRequestBuilder<CopyFileWork>()
-            .setInputData(workDataOf(KEY_FILEPATH to Config.FILE_NAME_LAKE))
-            .build()
-        WorkManager.getInstance(baseContext).enqueue(request)
-        WorkManager.getInstance(baseContext).getWorkInfoByIdLiveData(request.id)
-            .observe(this, Observer<WorkInfo> {
-                Log.d(TAG, "state " + it.state)
-                if (it.state == WorkInfo.State.FAILED) {
-                    val outputData = it.getOutputData().getString("out_put")
-                    Log.d(TAG, "outputData $outputData")
-                }
-            })
+
     }
 
     override fun onClick(view: View, position: Int) {

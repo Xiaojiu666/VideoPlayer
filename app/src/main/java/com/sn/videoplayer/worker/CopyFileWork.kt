@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
+import com.sn.videoplayer.data.Config
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
@@ -25,13 +26,12 @@ class CopyFileWork(context: Context, workerParams: WorkerParameters) :
             val filePath = inputData.getString(KEY_FILEPATH)
             if (filePath != null) {
                 val file = File(filePath)
-                Log.e(TAG, "filePath "+ file.exists())
+                Log.e(TAG, "filePath $filePath")
                 if (!file.exists()) {
                     val outPut = Data.Builder().putString("out_put", "File no exists").build()
                     Result.failure(outPut)
                 }else{
-                    Log.e(TAG, "filePath $filePath")
-                    applicationContext.assets.open("lake.mp4").use { inputStream ->
+                    applicationContext.assets.open(Config.PLAY_FILE).use { inputStream ->
                         val fos = FileOutputStream(file)
                         val bis = BufferedInputStream(inputStream)
                         val buffer = ByteArray(1024)

@@ -1,7 +1,10 @@
 package com.sn.videoplayer.ffmpeg.demo
 
+import android.text.TextUtils
 import android.util.Log
 import android.view.Surface
+import com.google.gson.Gson
+import com.sn.videoplayer.MediaInfoManager
 
 object DemoNativeInterface {
 
@@ -13,7 +16,7 @@ object DemoNativeInterface {
 
     external fun pause(player: Int)
 
-    external fun videoTime(player: Int): String
+    external fun setSeekTime(player: Int,time: Int): String
 
     external fun videoTotalTime(player: Int): Int
 
@@ -30,16 +33,24 @@ object DemoNativeInterface {
     external fun generatePng(media: Int, path: String)
 
 
-    fun playerInfoCallback(string: String) {
-        Log.d("playerInfoCallback", "generatePngCallback $string");
+    fun playerInfoCallbackMsg(string: String) {
+        Log.d("playerInfoCallback", "playerInfoCallbackMsg $string");
         playerInfoCallBack!!.playerInfo(string)
     }
 
-    fun generatePngCallback(string: String) {
-        Log.d("DemoNativeInterface", "generatePngCallback $string");
-        if (mediaInfoCallBack != null) {
-            mediaInfoCallBack!!.generatePngCallBack(string)
+    fun mediaInfoCallbackMsg(string: String) {
+        Log.d("DemoNativeInterface", "mediaInfoCallbackMsg $string");
+        if (TextUtils.isEmpty(string)) {
+            return
         }
+        val fromJson = Gson().fromJson(string, MediaInfo::class.java)
+        MediaInfoManager.mediaInfo = fromJson
+        mediaInfoCallBack!!.mediaInfoCallBack(fromJson)
+    }
+
+    fun mediaInfoCallbackMsg(mediaInfo: MediaInfo) {
+        Log.d("DemoNativeInterface", "mediaInfoCallbackMsg $mediaInfo");
+//        mediaInfoCallBack!!.mediaInfoCallBack(mediaInfo)
     }
 
     fun nativeCallback(double: Double) {

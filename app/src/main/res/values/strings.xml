@@ -9,4 +9,6 @@
     <string name="video_rest">重新播放</string>
     <string name="seek_before">向前10S</string>
     <string name="seek_after">向后10S</string>
+    <string name="media_base_info">视频信息</string>
+    <string name="media_base_info_desc">视频的基础信息</string>
 </resources>

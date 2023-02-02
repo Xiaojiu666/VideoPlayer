@@ -37,7 +37,8 @@
             android:launchMode="singleTop">
 
         </activity>
-        <activity android:name=".VideoSettingActivity" />
+        <activity android:name=".setting.VideoSettingActivity" />
+        <activity android:name=".setting.SettingMediaInfoActivity" />
     </application>
 
 </manifest>

@@ -90,6 +90,7 @@ public:
 
     void SetRender(AudioRender *render);
 
+
 protected:
     void Prepare(JNIEnv *env) override;
     void Render(AVFrame *frame,JNIEnv *env,jobject obj) override;

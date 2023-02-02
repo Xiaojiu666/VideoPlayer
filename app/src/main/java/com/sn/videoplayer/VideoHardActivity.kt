@@ -1,10 +1,8 @@
 package com.sn.videoplayer
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import com.sn.videoplayer.data.Config
-import com.sn.videoplayer.ffmpeg.demo.DemoNativeInterface
 import com.sn.videoplayer.media_codec.MediaCodecPlayer
 import kotlinx.android.synthetic.main.activity_video.*
 

@@ -14,6 +14,7 @@
 #include "i_decoder.h"
 #include "decode_state.h"
 #include "../../utils/callback.h"
+#include "../../jsoncpp/value.h"
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -21,6 +22,8 @@ extern "C" {
 #include <libavutil/frame.h>
 #include <libavutil/time.h>
 };
+static const char *playerInfoCallback = "playerInfoCallbackMsg";
+static const char *mediaInfoCallback = "mediaInfoCallbackMsg";
 
 class BaseDecoder : public IDecoder {
 
@@ -38,18 +41,23 @@ private:
     // 解码器上下文
     AVCodecContext *m_codec_ctx = NULL;
 
-    // 待解码包
+    // 待解码包 解封装后保存压缩数据包
     AVPacket *m_packet = NULL;
 
-    // 最终解码数据
+    // 最终解码数据 解码后保存音视频帧
     AVFrame *m_frame = NULL;
 
+
+    //seek position
+    int m_SeekPosition = 0;
 
     // 当前播放时间
     int64_t m_cur_t_s = 0;
 
     // 总时长
-    long m_duration = 0;
+    int m_duration = 0;
+    // bit
+    int m_bit_rate = 0;
 
     // 开始播放的时间
     int64_t m_started_t = -1;
@@ -74,12 +82,15 @@ private:
     // 经过转换的路径
     const char *m_path = NULL;
 
+//    static const char *name = "playerInfoCallback";
     // 线程等待锁变量
     pthread_mutex_t m_mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_cond_t m_cond = PTHREAD_COND_INITIALIZER;
 
     // 为合成器提供解码
     bool m_for_synthesizer = false;
+
+    Json::Value user;
 
     //-----------------私有方法------------------------------------
     /**
@@ -93,7 +104,7 @@ private:
      * 初始化FFMpeg相关的参数
      * @param env jvm环境
      */
-    void InitFFMpegDecoder(JNIEnv *env);
+    void InitFFMpegDecoder(JNIEnv *env, Callback *callback);
 
     /**
      * 分配解码过程中需要的缓存
@@ -161,7 +172,7 @@ public:
     }
 
 
-    char *VideoTime() override;
+    void setMediaSeekTime(int time) override;
 
     int VideoTotalTime() override;
 

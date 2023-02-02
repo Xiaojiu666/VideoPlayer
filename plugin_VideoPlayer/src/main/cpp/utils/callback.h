@@ -22,6 +22,8 @@ public:
 
     void callbackS(const char* name,const char *value);
 
+    void callbackMediaInfo(const char *methodName,int value);
+
     void callbackS(const char* name,const char *TAG,const char *value);
 
 private:
