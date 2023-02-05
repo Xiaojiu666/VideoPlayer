@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.SurfaceHolder
+import android.view.SurfaceView
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -14,6 +15,7 @@ import androidx.work.workDataOf
 import com.sn.videoplayer.data.Config
 import com.sn.videoplayer.ffmpeg.demo.*
 import com.sn.videoplayer.setting.VideoSettingActivity
+import com.sn.videoplayer.view.VideoPlaySurfaceView
 import com.sn.videoplayer.worker.CopyFileWork
 import kotlinx.android.synthetic.main.activity_video.*
 import kotlinx.android.synthetic.main.activity_video.view.*
@@ -22,13 +24,15 @@ import org.jetbrains.anko.startActivity
 class VideoActivity : AppCompatActivity() {
     var defaultTime = 0
     var seekStatus = false
+    var videoFilePath = ""
+    private lateinit var  videoPlayView : VideoPlaySurfaceView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
         initData()
         initView()
-        val fFmpegPlayer = FFmpegPlayer()
+
         DemoNativeInterface.mediaInfoCallBack = (object : MediaInfoCallBack {
             override fun mediaInfoCallBack(mediaInfo: MediaInfo) {
                 runOnUiThread {
@@ -57,44 +61,43 @@ class VideoActivity : AppCompatActivity() {
 
         })
         var initVideoPlayer = 0;
-        sfv!!.holder!!.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(
-                holder: SurfaceHolder,
-                format: Int,
-                width: Int,
-                height: Int
-            ) {
-            }
-
-            override fun surfaceDestroyed(holder: SurfaceHolder) {
-            }
-
-            override fun surfaceCreated(holder: SurfaceHolder) {
-                initVideoPlayer =
-                    fFmpegPlayer.initVideoPlayer(holder.surface, Config.PLAY_FILE_PATH)
-                Log.e(TAG, "initVideoPlayer : $initVideoPlayer")
-                Thread(Runnable {
-                    runOnUiThread {
-//                        var videoTime = fFmpegPlayer.getVideoTime(initVideoPlayer)
-//                        var videoTime = fFmpegPlayer.getVideoTotalTime(initVideoPlayer)
-//                        Log.e(TAG, "videoTime : $videoTime")
-//                        seekBar.setTotalTime(videoTime)
-                    }
-                }).start()
-            }
-        })
+//        sfv!!.holder!!.addCallback(object : SurfaceHolder.Callback {
+//            override fun surfaceChanged(
+//                holder: SurfaceHolder,
+//                format: Int,
+//                width: Int,
+//                height: Int
+//            ) {
+//            }
 //
+//            override fun surfaceDestroyed(holder: SurfaceHolder) {
+//            }
+//
+//            override fun surfaceCreated(holder: SurfaceHolder) {
+//                initVideoPlayer =
+//                    fFmpegPlayer.initVideoPlayer(holder.surface, Config.PLAY_FILE_PATH)
+//                Log.e(TAG, "initVideoPlayer : $initVideoPlayer")
+//                Thread(Runnable {
+//                    runOnUiThread {
+////                        var videoTime = fFmpegPlayer.getVideoTime(initVideoPlayer)
+////                        var videoTime = fFmpegPlayer.getVideoTotalTime(initVideoPlayer)
+////                        Log.e(TAG, "videoTime : $videoTime")
+////                        seekBar.setTotalTime(videoTime)
+//                    }
+//                }).start()
+//            }
+//        })
+////
 //
 //
         video_start.setOnClickListener {
-            fFmpegPlayer.start(initVideoPlayer)
+            videoPlayView.start()
         }
 
         video_stop.setOnClickListener {
-            fFmpegPlayer.stop(initVideoPlayer)
+            videoPlayView.stop()
         }
         video_seek_after.setOnClickListener {
-//            fFmpegPlayer.getVideoTime(initVideoPlayer)
         }
 
         video_seek_bar.videoSeekBar.setOnSeekBarChangeListener(object :
@@ -120,21 +123,12 @@ class VideoActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        val request = OneTimeWorkRequestBuilder<CopyFileWork>()
-            .setInputData(workDataOf(CopyFileWork.KEY_FILEPATH to Config.PLAY_FILE_PATH))
-            .build()
-        WorkManager.getInstance(baseContext).enqueue(request)
-        WorkManager.getInstance(baseContext).getWorkInfoByIdLiveData(request.id)
-            .observe(this, Observer<WorkInfo> {
-                Log.d(TAG, "state " + it.state)
-                if (it.state == WorkInfo.State.FAILED) {
-                    val outputData = it.outputData.getString("out_put")
-                    Log.d(TAG, "outputData $outputData")
-                }
-            })
+        videoFilePath =  intent.getStringExtra("videoFilePath")!!
     }
 
     private fun initView() {
+        videoPlayView = findViewById(R.id.sfv)
+        videoPlayView.setFile(videoFilePath)
         setSupportActionBar(toolbar)
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SettingItemView">	<!-- 全类名-->>
+        <attr name="item_title" format="string"/>	<!-- 属性名 + 属性类型 （由于标题为字符串，所以设置为字符串）-->>
+        <attr name="item_sub_title" format="string"/>	<!-- 属性名 + 属性类型 （由于标题为字符串，所以设置为字符串）-->>
+
+    </declare-styleable>
+</resources>

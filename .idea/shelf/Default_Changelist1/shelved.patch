@@ -1,0 +1,15 @@
+Index: settings.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>include ':plugin_VideoPlayer'\r\ninclude ':app'\r\nrootProject.name = \"VideoPlayer\"\r\ninclude ':plugin_datasource'\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/settings.gradle b/settings.gradle
+--- a/settings.gradle	(revision 4454610bd2eaea0b9f08049976142f1a0e0407f9)
++++ b/settings.gradle	(date 1675352545569)
+@@ -2,3 +2,4 @@
+ include ':app'
+ rootProject.name = "VideoPlayer"
+ include ':plugin_datasource'
++include ':MultiConditionFilePicker'

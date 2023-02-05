@@ -6,9 +6,9 @@ abstract class  PlayerControl {
 
     abstract fun initVideoPlayer(surface: Surface,filePath:String): Int
 
-    abstract fun start(playId: Int)
+    abstract fun start()
 
-    abstract fun stop(playId: Int)
+    abstract fun stop()
 
     abstract fun onDestroy()
 

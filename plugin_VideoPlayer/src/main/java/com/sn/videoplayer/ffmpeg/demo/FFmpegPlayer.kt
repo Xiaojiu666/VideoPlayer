@@ -3,18 +3,24 @@ package com.sn.videoplayer.ffmpeg.demo
 import android.view.Surface
 import com.sn.videoplayer.PlayerControl
 
-class FFmpegPlayer : PlayerControl() {
+class FFmpegPlayer(surface: Surface,filePath: String) : PlayerControl() {
+
+    var playId = -1;
+
+    init {
+        playId = DemoNativeInterface.createPlayer(filePath, surface)
+    }
 
     override fun initVideoPlayer(surface: Surface, filePath: String): Int {
         return DemoNativeInterface.createPlayer(filePath, surface)
     }
 
 
-    override fun start(playId: Int) {
+    override fun start() {
         DemoNativeInterface.play(playId)
     }
 
-    override fun stop(playId: Int) {
+    override fun stop() {
         DemoNativeInterface.pause(playId)
     }
 

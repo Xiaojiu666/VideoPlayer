@@ -34,17 +34,17 @@ class MediaCodecPlayer(var sfv: SurfaceView, var filePath: String) : PlayerContr
         return 0;
     }
 
-    override fun start(playId: Int) {
+    override fun start() {
         //开启播放
         videoDecoder!!.goOn()
         audioDecoder!!.goOn()
     }
 
-    override fun stop(playId: Int) {
-
+    override fun stop() {
         videoDecoder!!.stop()
         audioDecoder!!.stop()
     }
+
 
     override fun onDestroy() {
         videoDecoder!!.release()

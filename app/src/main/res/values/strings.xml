@@ -11,4 +11,10 @@
     <string name="seek_after">向后10S</string>
     <string name="media_base_info">视频信息</string>
     <string name="media_base_info_desc">视频的基础信息</string>
+    <string name="selector">请选择播放文件</string>
+    <string name="tip_selector_file">选择播放文件</string>
+
+
+    <string name="media_info_ksb">%s kbs</string>
+    <string name="media_info_frame">%s 帧</string>
 </resources>

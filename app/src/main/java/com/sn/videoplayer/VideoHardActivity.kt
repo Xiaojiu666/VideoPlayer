@@ -19,11 +19,11 @@ class VideoHardActivity : AppCompatActivity() {
 
     private fun initView() {
         video_start.setOnClickListener {
-            mediaCodecPlayer.start(0)
+            mediaCodecPlayer.start()
         }
 
         video_stop.setOnClickListener {
-            mediaCodecPlayer.stop(0)
+            mediaCodecPlayer.stop()
         }
 
 

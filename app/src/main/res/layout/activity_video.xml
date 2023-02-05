@@ -13,7 +13,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <SurfaceView
+    sfv<com.sn.videoplayer.view.VideoPlaySurfaceView
         android:id="@+id/sfv"
         android:layout_width="match_parent"
         android:layout_height="200dp"

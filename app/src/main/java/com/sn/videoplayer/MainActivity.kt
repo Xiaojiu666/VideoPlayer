@@ -1,54 +1,47 @@
 package com.sn.videoplayer
 
+import android.Manifest
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
-import androidx.work.workDataOf
-import com.sn.videoplayer.data.Config
 import com.sn.videoplayer.data.GuideTitle
+import com.sn.videoplayer.ffmpeg.demo.FFmpegPlayer
 import com.sn.videoplayer.view.GuideAdapter
-import com.sn.videoplayer.worker.CopyFileWork
-import com.sn.videoplayer.worker.CopyFileWork.Companion.KEY_FILEPATH
+import getPath
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.File
+import kotlinx.android.synthetic.main.activity_main.view.*
 import java.util.*
-import java.util.logging.Logger
 
 class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
     var TAG = "MainActivity"
     var titles = arrayOf("音视频编解码-软解码", "音视频编解码-硬解码")
     var descs = arrayOf("FFmpeg", "MediaCodec")
     var data = ArrayList<GuideTitle>()
-    var title = "[{ \n" +
-            "  \"tile\":\"\",\n" +
-            "  \"tile_desc\":\"测试\",\n" +
-            "  \"sub_title\":[{ \n" +
-            "  \"tile\":\"\",\n" +
-            "  \"tile_desc\":\"测试\",\n" +
-            "  \"sub_title\":[\"a\",\"b\"]\n" +
-            "},{ \n" +
-            "  \"tile\":\"\",\n" +
-            "  \"tile_desc\":\"测试\"\n" +
-            "}\n" +
-            "]\n" +
-            "},{ \n" +
-            "  \"tile\":\"\",\n" +
-            "  \"tile_desc\":\"测试\"\n" +
-            "}\n" +
-            "]"
+    var storagePermission = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    var videoFilePath = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initData()
+        initView()
         initRecyclerView()
+    }
+
+    private fun initView() {
+        to_file_selector.setOnClickListener {
+            requestStoragePermission()
+        }
     }
 
     private fun initData() {
@@ -69,9 +62,6 @@ class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
             )
         )
         guideAdapter.onClickListener = this
-
-
-
     }
 
     override fun onClick(view: View, position: Int) {
@@ -79,20 +69,56 @@ class MainActivity : AppCompatActivity(), GuideAdapter.OnClickListener {
             0 -> {
                 toSoftActivity()
             }
-            1 -> {
-                toHardActivity()
-            }
+//            1 -> {
+//                toHardActivity()
+//            }
         }
     }
     
     private fun toSoftActivity() {
+        if(TextUtils.isEmpty(videoFilePath)){
+            Toast.makeText(baseContext,getString(R.string.tip_selector_file),Toast.LENGTH_SHORT).show()
+            return
+        }
         val intent = Intent(this, VideoActivity::class.java)
+        intent.putExtra("videoFilePath",videoFilePath)
         startActivity(intent)
     }
 
     private fun toHardActivity() {
         val intent = Intent(this, VideoHardActivity::class.java)
+        intent.putExtra("videoFilePath",videoFilePath)
         startActivity(intent)
+    }
+
+
+    private fun requestStoragePermission() {
+        result4StoragePermission.launch(storagePermission)
+    }
+
+
+    private val registerForActivityResult = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
+        if (it == null){
+            return@registerForActivityResult
+        }
+        val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+        if (isKitKat){
+            videoFilePath = getPath(this, it)!!
+            tv_file_name.text = videoFilePath
+        }
+    }
+
+    private val result4StoragePermission = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+        if (it[Manifest.permission.READ_EXTERNAL_STORAGE]!!&&it[Manifest.permission.WRITE_EXTERNAL_STORAGE]!!){
+            registerForActivityResult.launch(arrayOf("*/*"))
+        }else{
+            val intent = Intent()
+            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            intent.data = Uri.parse("package:$packageName")
+            startActivity(intent)
+        }
     }
 
 }

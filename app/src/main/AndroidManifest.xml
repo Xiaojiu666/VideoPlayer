@@ -20,16 +20,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
-
-        </activity>
-        <activity
-            android:name=".VideoActivity"
-            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".VideoActivity"
+            android:launchMode="singleTop">
         </activity>
 
         <activity
@@ -39,6 +38,13 @@
         </activity>
         <activity android:name=".setting.VideoSettingActivity" />
         <activity android:name=".setting.SettingMediaInfoActivity" />
+<!--        <activity android:name="com.nine.lib_filepicker.ui.TestActivity">-->
+<!--&lt;!&ndash;            <intent-filter>&ndash;&gt;-->
+<!--&lt;!&ndash;                <action android:name="android.intent.action.MAIN" />&ndash;&gt;-->
+
+<!--&lt;!&ndash;                <category android:name="android.intent.category.LAUNCHER" />&ndash;&gt;-->
+<!--&lt;!&ndash;            </intent-filter>&ndash;&gt;-->
+<!--        </activity>-->
     </application>
 
 </manifest>
