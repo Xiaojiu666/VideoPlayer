@@ -55,5 +55,4 @@ class VideoPlaySurfaceView : SurfaceView, SurfaceHolder.Callback {
     fun stop(){
         VideoControlManager.playStop()
     }
-
 }

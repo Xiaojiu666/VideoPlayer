@@ -7,4 +7,6 @@ interface MediaInfoCallBack {
 
     fun mediaInfoCallBack(mediaInfo: MediaInfo)
 
+    fun audioInfoCallBack(audioInfo: AudioInfo)
+
 }

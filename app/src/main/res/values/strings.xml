@@ -15,6 +15,8 @@
     <string name="tip_selector_file">选择播放文件</string>
 
 
-    <string name="media_info_ksb">%s kbs</string>
+    <string name="media_info_kps">%s kps</string>
     <string name="media_info_frame">%s 帧</string>
+
+    <string name="audio_info_sample">%d kHz</string>
 </resources>

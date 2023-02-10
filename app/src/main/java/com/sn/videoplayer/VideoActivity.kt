@@ -39,6 +39,10 @@ class VideoActivity : AppCompatActivity() {
                     video_seek_bar.setTotalTime(mediaInfo.duration)
                 }
             }
+
+            override fun audioInfoCallBack(audioInfo: AudioInfo) {
+
+            }
         })
 
         DemoNativeInterface.playerInfoCallBack = (object : PlayerInfoCallBack {

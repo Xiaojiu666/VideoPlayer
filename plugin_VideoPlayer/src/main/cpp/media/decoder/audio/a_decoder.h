@@ -104,6 +104,10 @@ protected:
         return AVMEDIA_TYPE_AUDIO;
     }
 
+    const char *const CallBackMediaType() override {
+        return audioInfoCallback;
+    };
+
     const char *const LogSpec() override {
         return "AudioDecoder";
     };

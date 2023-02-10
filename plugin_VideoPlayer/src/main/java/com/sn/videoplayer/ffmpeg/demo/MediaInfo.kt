@@ -1,60 +1,53 @@
-package com.sn.videoplayer.ffmpeg.demo;
+package com.sn.videoplayer.ffmpeg.demo
 
-public class MediaInfo {
-    public int getDuration() {
-        return duration;
+import android.os.Parcel
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+class MediaInfo() : Parcelable {
+    var duration = 0
+    var bitRate = 0
+    var frames = 0
+    var height = 0
+    var width = 0
+
+    constructor(parcel: Parcel) : this() {
+        duration = parcel.readInt()
+        bitRate = parcel.readInt()
+        frames = parcel.readInt()
+        height = parcel.readInt()
+        width = parcel.readInt()
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public int getBitRate() {
-        return bitRate;
-    }
-
-    public void setBitRate(int bitRate) {
-        this.bitRate = bitRate;
-    }
-
-    public int getFrames() {
-        return frames;
-    }
-
-    public void setFrames(int frames) {
-        this.frames = frames;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    int duration;
-    int bitRate;
-    int frames;
-    int height;
-    int width;
-
-    @Override
-    public String toString() {
+    override fun toString(): String {
         return "MediaInfo{" +
                 "duration=" + duration +
                 ", bitRate=" + bitRate +
                 ", frames=" + frames +
                 ", height=" + height +
                 ", width=" + width +
-                '}';
+                '}'
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(duration)
+        parcel.writeInt(bitRate)
+        parcel.writeInt(frames)
+        parcel.writeInt(height)
+        parcel.writeInt(width)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<MediaInfo> {
+        override fun createFromParcel(parcel: Parcel): MediaInfo {
+            return MediaInfo(parcel)
+        }
+
+        override fun newArray(size: Int): Array<MediaInfo?> {
+            return arrayOfNulls(size)
+        }
     }
 }

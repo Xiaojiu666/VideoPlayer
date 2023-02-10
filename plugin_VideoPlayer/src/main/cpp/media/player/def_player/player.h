@@ -23,6 +23,8 @@ private:
 
     Callback *javaCallback;
 
+    static jstring pathA;
+
 
 public:
     Player(JNIEnv *jniEnv,jobject obj, jstring path, jobject surface);

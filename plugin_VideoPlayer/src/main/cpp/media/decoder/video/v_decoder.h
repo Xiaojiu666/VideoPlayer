@@ -18,6 +18,8 @@ extern "C" {
 #include <libswscale/swscale.h>
 };
 
+
+
 class VideoDecoder : public BaseDecoder {
 private:
     const char *TAG = "VideoDecoder";
@@ -58,9 +60,12 @@ private:
      */
     void InitSws();
 
+
 public:
     VideoDecoder(JNIEnv *env, jobject obj, jstring path, bool for_synthesizer = false);
+
     ~VideoDecoder();
+
     void SetRender(VideoRender *render);
 
 protected:
@@ -91,6 +96,11 @@ protected:
      * 释放回调
      */
     void Release() override;
+
+
+    const char *const CallBackMediaType() override {
+        return videoInfoCallback;
+    };
 
     const char *const LogSpec() override {
         return "VideoDecoder";

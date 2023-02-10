@@ -85,7 +85,7 @@ void Callback::callbackMediaInfo(const char *methodName,int value) {
 //    jstring jname = jniEnv->NewStringUTF(name.c_str());
     //步骤4:调用相应的方法
     jniEnv->CallVoidMethod(user_obj, method_set_id, value);//set函数没返回值
-//    //调用方法
+//    //调用方法0
 //    jstring result = (jstring) env->CallObjectMethod(user_obj, method_get_id);
 //    // LOGD("result:%s",jstring2str(env,result).c_str());
 //    LOGD("JniNative返回数据:%s",jstring2string(jniEnv,result).c_str());

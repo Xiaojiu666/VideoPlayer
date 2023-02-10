@@ -22,8 +22,10 @@ extern "C" {
 #include <libavutil/frame.h>
 #include <libavutil/time.h>
 };
+
 static const char *playerInfoCallback = "playerInfoCallbackMsg";
-static const char *mediaInfoCallback = "mediaInfoCallbackMsg";
+static const char *videoInfoCallback = "mediaInfoCallbackMsg";
+static const char *audioInfoCallback = "audioInfoCallbackMsg";
 
 class BaseDecoder : public IDecoder {
 
@@ -149,6 +151,8 @@ public:
     virtual ~BaseDecoder();
 
     jobject m_obj = NULL;
+
+
 
     /**
      * 视频宽度
@@ -288,6 +292,12 @@ protected:
      * Log前缀
      */
     virtual const char *const LogSpec() = 0;
+
+
+    /**
+     * 回调方法 名字
+     */
+    virtual const char *const CallBackMediaType() = 0;
 
     /**
      * 进入等待

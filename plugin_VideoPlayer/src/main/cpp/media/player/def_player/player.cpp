@@ -10,6 +10,8 @@
 //#include "../../render/video/opengl_render/opengl_render.h"
 //#include "../../../opengl/drawer/proxy/def_drawer_proxy_impl.h"
 //const char *TAG = "VideoDecoder";
+
+
 Player::Player(JNIEnv *jniEnv, jobject obj, jstring path, jobject surface) {
 
     javaCallback = new Callback(jniEnv, obj);

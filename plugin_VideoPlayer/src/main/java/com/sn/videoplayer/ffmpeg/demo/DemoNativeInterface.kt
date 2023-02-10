@@ -48,6 +48,16 @@ object DemoNativeInterface {
         mediaInfoCallBack!!.mediaInfoCallBack(fromJson)
     }
 
+    fun audioInfoCallbackMsg(string: String) {
+        Log.d("DemoNativeInterface", "audioInfoCallbackMsg $string");
+        if (TextUtils.isEmpty(string)) {
+            return
+        }
+        val fromJson = Gson().fromJson(string, AudioInfo::class.java)
+        MediaInfoManager.audioInfo = fromJson
+        mediaInfoCallBack!!.audioInfoCallBack(fromJson)
+    }
+
     fun mediaInfoCallbackMsg(mediaInfo: MediaInfo) {
         Log.d("DemoNativeInterface", "mediaInfoCallbackMsg $mediaInfo");
 //        mediaInfoCallBack!!.mediaInfoCallBack(mediaInfo)

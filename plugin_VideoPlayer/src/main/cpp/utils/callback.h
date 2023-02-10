@@ -28,7 +28,6 @@ public:
 
 private:
 
-
     JNIEnv *jniEnv= NULL;
 
     jobject jobJect= NULL;;

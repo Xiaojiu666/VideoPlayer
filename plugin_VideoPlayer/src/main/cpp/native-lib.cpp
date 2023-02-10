@@ -27,6 +27,8 @@ int volatile gIsThreadStop = 0;
 JNIEXPORT jstring JNICALL
 Java_com_sn_videoplayer_ffmpeg_demo_DemoNativeInterface_ffmpegInfo(JNIEnv *env,
                                                                    jobject /* this */) {
+    unsigned int i = avutil_version();
+    int avcodec_v = avcodec_version();
 
     char info[40000] = {0};
 //    AVCodec *c_temp = av_codec_next(NULL);

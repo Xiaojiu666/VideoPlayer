@@ -170,15 +170,24 @@ void BaseDecoder::InitFFMpegDecoder(JNIEnv *env, Callback *callback) {
         m_bit_rate = (int) (m_format_ctx->bit_rate / 1000);
         int m_width = pStream->codecpar->width;
         int m_height = pStream->codecpar->height;
-
         user["duration"] = m_duration;
         user["bitRate"] = m_bit_rate;
         user["frames"] = frames;
         user["width"] = m_width;
         user["height"] = m_height;
         const char *string = user.toStyledString().c_str();
-        callback->callbackS(mediaInfoCallback, string);
+        callback->callbackS(videoInfoCallback, string);
     }
+
+    if (codecPar->codec_type == AVMEDIA_TYPE_AUDIO){
+       int m_channels = codecPar->channels; //采样率
+       int sample_rate = codecPar->sample_rate;  //通道数
+        user["channels"] = m_channels;
+        user["sample_rate"] = sample_rate;
+        const char *string = user.toStyledString().c_str();
+        callback->callbackS(audioInfoCallback, string);
+    }
+
 
     LOG_INFO(TAG, LogSpec(), "Decoder init success ")
 }

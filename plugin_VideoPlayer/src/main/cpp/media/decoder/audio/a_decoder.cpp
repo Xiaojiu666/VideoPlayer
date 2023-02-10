@@ -105,6 +105,7 @@ void AudioDecoder::Render(AVFrame *frame,JNIEnv *env,jobject obj) {
     LOG_INFO(TAG, LogSpec(), "Render end")
 }
 
+
 void AudioDecoder::Release() {
     if (m_swr != NULL) {
         swr_free(&m_swr);
